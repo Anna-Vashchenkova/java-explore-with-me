@@ -16,7 +16,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleInvalidEmail(final ValidationException e) {
-        log.info("Ошибка валидации");
+        log.info("Ошибка валидации",e);
         return new ErrorResponse(
                 e.getMessage(), e.getMessage()
         );
@@ -25,7 +25,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleInvalidEmail(final DataNotFoundException e) {
-        log.info("Ошибка валидации");
+        log.info("Ошибка валидации", e);
         return new ErrorResponse(
                 "Ошибка валидации", e.getMessage()
         );
