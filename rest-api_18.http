@@ -33,3 +33,13 @@ Content-Type: application/json
 GET http://localhost:9090/stats?start=2022-01-06%2011:00:23&end=2023-12-06%2011:00:23&uris=%2Fevents%2F1,%2Fevents%2F2&unique=true
 Accept: application/json
 Content-Type: application/json
+
+### Успешное получение всех записей без указания URI
+GET http://localhost:9090/stats?start=2022-01-06%2011:00:23&end=2023-12-06%2011:00:23
+Accept: application/json
+Content-Type: application/json
+
+### Успешное получение уникальных записей без указания URI
+GET http://localhost:9090/stats?start=2022-01-06%2011:00:23&end=2023-12-06%2011:00:23&unique=true
+Accept: application/json
+Content-Type: application/json

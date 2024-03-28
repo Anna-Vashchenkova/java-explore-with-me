@@ -8,7 +8,7 @@ import java.util.List;
 public interface StatsService {
     void saveHit(String app, String uri, String ip, LocalDateTime dateTime);
 
-    List<HitOutcomeDto> getStatNotUnique(LocalDateTime start, LocalDateTime end);
+    List<HitOutcomeDto> getStatNotUnique(LocalDateTime start, LocalDateTime end, List<String> uris);
 
-    List<HitOutcomeDto> getStatUnique(LocalDateTime start, LocalDateTime end);
+    List<HitOutcomeDto> getStatUnique(LocalDateTime start, LocalDateTime end, List<String> uris);
 }

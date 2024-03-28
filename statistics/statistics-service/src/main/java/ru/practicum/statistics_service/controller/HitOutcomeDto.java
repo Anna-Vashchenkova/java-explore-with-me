@@ -10,5 +10,5 @@ import lombok.Setter;
 public class HitOutcomeDto {
     private String app;
     private String uri;
-    private long hitsCount;
+    private long hits;
 }

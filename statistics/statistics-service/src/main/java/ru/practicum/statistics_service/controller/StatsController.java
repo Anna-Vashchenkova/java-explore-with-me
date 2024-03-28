@@ -46,9 +46,9 @@ public class StatsController {
             throw new ValidationException("Входные данные не корректны");
         }
         if(!unique) {
-            return statsService.getStatNotUnique(dateTimeStart, dateTimeEnd);
+            return statsService.getStatNotUnique(dateTimeStart, dateTimeEnd, uris);
         } else {
-            return statsService.getStatUnique(dateTimeStart, dateTimeEnd);
+            return statsService.getStatUnique(dateTimeStart, dateTimeEnd, uris);
         }
     }
 }

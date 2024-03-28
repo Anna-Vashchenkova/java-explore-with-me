@@ -23,13 +23,21 @@ public class StatsServiceImpl implements StatsService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<HitOutcomeDto> getStatNotUnique(LocalDateTime start, LocalDateTime end) {
-        return repository.findByStartAndEnd(start, end);
+    public List<HitOutcomeDto> getStatNotUnique(LocalDateTime start, LocalDateTime end, List<String> uris) {
+        if (uris == null) {
+            return repository.findByStartAndEnd(start, end);
+        } else {
+            return repository.findByStartAndEndAndUri(start, end, uris);
+        }
     }
 
     @Override
-    public List<HitOutcomeDto> getStatUnique(LocalDateTime start, LocalDateTime end) {
-        return repository.findByStartAndEndAndIp(start, end);
+    public List<HitOutcomeDto> getStatUnique(LocalDateTime start, LocalDateTime end, List<String> uris) {
+        if (uris == null) {
+            return repository.findByStartAndEndAndIp(start, end);
+        } else {
+            return  repository.findByStartAndEndAndUriAndIp(start, end, uris);
+        }
     }
 }
 
