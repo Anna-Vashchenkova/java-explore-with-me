@@ -11,6 +11,7 @@ import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -30,7 +31,7 @@ public class StatsController {
     }
 
     @GetMapping("/stats")
-    public HitOutcomeDto getStat(
+    public List<HitOutcomeDto> getStat(
             @RequestParam String start,
             @RequestParam String end,
             @RequestParam(name = "uris", required = false) ArrayList<String> uris,
@@ -44,7 +45,10 @@ public class StatsController {
         if (dateTimeStart.isAfter(dateTimeEnd)) {
             throw new ValidationException("Входные данные не корректны");
         }
-
-        return statsService.getStat(dateTimeStart, dateTimeEnd, uris, unique);
+        if(!unique) {
+            return statsService.getStatNotUnique(dateTimeStart, dateTimeEnd);
+        } else {
+            return statsService.getStatUnique(dateTimeStart, dateTimeEnd);
+        }
     }
 }

@@ -3,10 +3,12 @@ package ru.practicum.statistics_service.service;
 import ru.practicum.statistics_service.controller.HitOutcomeDto;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.List;
 
 public interface StatsService {
     void saveHit(String app, String uri, String ip, LocalDateTime dateTime);
 
-    HitOutcomeDto getStat(LocalDateTime start, LocalDateTime end, ArrayList<String> uris, boolean unique);
+    List<HitOutcomeDto> getStatNotUnique(LocalDateTime start, LocalDateTime end);
+
+    List<HitOutcomeDto> getStatUnique(LocalDateTime start, LocalDateTime end);
 }

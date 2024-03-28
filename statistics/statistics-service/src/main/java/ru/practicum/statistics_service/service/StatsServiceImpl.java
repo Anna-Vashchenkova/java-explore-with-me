@@ -9,7 +9,6 @@ import ru.practicum.statistics_service.controller.HitOutcomeDto;
 import ru.practicum.statistics_service.repository.StatsRepository;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,32 +23,13 @@ public class StatsServiceImpl implements StatsService {
 
     @Override
     @Transactional(readOnly = true)
-    public HitOutcomeDto getStat(LocalDateTime start, LocalDateTime end, ArrayList<String> uris, boolean unique) {
-        ArrayList<Hit> hits = new ArrayList<>();
-        int hitsCount = 0;
-        Hit hit = null;
-        if (uris != null) {
-            if (unique == false) {
-                for (String uri : uris) {
-                    ArrayList<Hit> hits1 = repository.findByStartAndEndAndUri(start, end, uri);
-                    hitsCount += hits1.size();
-                    hit = hits1.get(0);
-                }
-            }
-            else if (unique == true) {
-                for (String uri : uris) {
-                    ArrayList<Hit> hits2 = repository.findByStartAndEndAndUri2(start, end, uri);
-                    hitsCount += hits2.size();
-                    hit = hits2.get(0);
-                }
-            }
-            return new HitOutcomeDto(hit.getApp(), hit.getUri(), hitsCount);
-        } else {
-            ArrayList<Hit> allByStartAndEnd = repository.findAllByStartAndEnd(start, end);
-            hitsCount += allByStartAndEnd.size();
-            hit = allByStartAndEnd.get(0);
-            return new HitOutcomeDto(hit.getApp(), hit.getUri(), hitsCount);
-        }
+    public List<HitOutcomeDto> getStatNotUnique(LocalDateTime start, LocalDateTime end) {
+        return repository.findByStartAndEnd(start, end);
+    }
+
+    @Override
+    public List<HitOutcomeDto> getStatUnique(LocalDateTime start, LocalDateTime end) {
+        return repository.findByStartAndEndAndIp(start, end);
     }
 }
 

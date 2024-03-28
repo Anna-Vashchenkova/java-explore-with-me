@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class HitOutcomeDto {
-    String app;
-    String uri;
-    int hitsCount;
+    private String app;
+    private String uri;
+    private long hitsCount;
 }
