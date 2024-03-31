@@ -10,7 +10,7 @@
 
     <artifactId>statistics-dto</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Statistics Service</name>
+    <name>Statistics Dto</name>
 
     <dependencies>
         <dependency>
