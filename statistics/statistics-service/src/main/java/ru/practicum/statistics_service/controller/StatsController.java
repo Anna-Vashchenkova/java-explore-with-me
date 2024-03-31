@@ -47,7 +47,7 @@ public class StatsController {
         if (dateTimeStart.isAfter(dateTimeEnd)) {
             throw new ValidationException("Входные данные не корректны");
         }
-        if(!unique) {
+        if (!unique) {
             return statsService.getStatNotUnique(dateTimeStart, dateTimeEnd, uris);
         } else {
             return statsService.getStatUnique(dateTimeStart, dateTimeEnd, uris);

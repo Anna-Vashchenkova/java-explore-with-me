@@ -16,6 +16,7 @@ import java.util.List;
 @Slf4j
 public class StatsServiceImpl implements StatsService {
     private final StatsRepository repository;
+
     @Override
     public void saveHit(String app, String uri, String ip, LocalDateTime dateTime) {
         repository.save(new Hit(null, app, uri, ip, dateTime));
