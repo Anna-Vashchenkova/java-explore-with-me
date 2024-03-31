@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.statistics_dto.HitDto;
+import ru.practicum.statistics_dto.HitOutcomeDto;
 import ru.practicum.statistics_service.service.StatsService;
 import ru.practicum.statistics_service.exception.ValidationException;
 

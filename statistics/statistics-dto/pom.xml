@@ -4,19 +4,13 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>ru.practicum</groupId>
-        <artifactId>explore-with-me</artifactId>
+        <artifactId>statistics</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>statistics</artifactId>
+    <artifactId>statistics-dto</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Statistics</name>
-    <packaging>pom</packaging>
-
-    <modules>
-        <module>statistics-service</module>
-        <module>statistics-dto</module>
-    </modules>
+    <name>Statistics Service</name>
 
     <dependencies>
         <dependency>
@@ -27,11 +21,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
 
         <dependency>
@@ -57,9 +46,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 

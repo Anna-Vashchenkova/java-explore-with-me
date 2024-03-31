@@ -1,6 +1,6 @@
 package ru.practicum.statistics_service.service;
 
-import ru.practicum.statistics_service.controller.HitOutcomeDto;
+import ru.practicum.statistics_dto.HitOutcomeDto;
 
 import java.time.LocalDateTime;
 import java.util.List;

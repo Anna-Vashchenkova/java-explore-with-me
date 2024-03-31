@@ -1,4 +1,4 @@
-package ru.practicum.statistics_service.controller;
+package ru.practicum.statistics_dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,9 +7,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class HitDto {
+public class HitOutcomeDto {
     private String app;
     private String uri;
-    private String ip;
-    private String timestamp;
+    private long hits;
 }
