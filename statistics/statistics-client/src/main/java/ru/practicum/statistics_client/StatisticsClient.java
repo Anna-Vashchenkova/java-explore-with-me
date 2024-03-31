@@ -17,8 +17,8 @@ import java.util.List;
 public class StatisticsClient {
     private final WebClient webClient;
     private String baseUrl;
-    private final static String HIT_URI = "/hit";
-    private final static String STAT_URI = "/stats";
+    private static final String HIT_URI = "/hit";
+    private static final String STAT_URI = "/stats";
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public void saveHit(String app, String uri, String ip, LocalDateTime dateTime) {
