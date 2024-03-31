@@ -25,6 +25,7 @@ services:
       - POSTGRES_PASSWORD=ersdfxcv
 
   ewm-service:
+    build: ewm-service
     ports:
       - "8080:8080"
 
