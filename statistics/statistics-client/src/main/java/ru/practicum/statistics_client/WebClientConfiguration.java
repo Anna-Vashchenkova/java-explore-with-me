@@ -22,8 +22,6 @@ public class WebClientConfiguration {
     private String baseUrl;
     public static final int TIMEOUT = 1000;
 
-
-
     @Bean
     public WebClient webClientWithTimeout() {
         final var tcpClient = TcpClient
