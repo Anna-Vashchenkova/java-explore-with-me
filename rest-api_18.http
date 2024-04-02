@@ -1,0 +1,45 @@
+
+### Успешное добавление записи 2
+POST http://localhost:9090/hit
+Accept: application/json
+Content-Type: application/json
+
+{
+  "app": "ewm-main-service",
+  "uri": "/events/2",
+  "ip": "192.163.0.2",
+  "timestamp": "2023-09-06 11:00:23"
+}
+
+### Успешное добавление записи 1
+POST http://localhost:9090/hit
+Accept: application/json
+Content-Type: application/json
+
+{
+  "app": "ewm-main-service",
+  "uri": "/events/1",
+  "ip": "192.163.0.1",
+  "timestamp": "2022-09-06 11:00:23"
+}
+
+
+### Успешное получение всех записей
+GET http://localhost:9090/stats?start=2022-01-06%2011:00:23&end=2023-12-06%2011:00:23&uris=%2Fevents%2F1,%2Fevents%2F2
+Accept: application/json
+Content-Type: application/json
+
+### Успешное получение уникальных записей
+GET http://localhost:9090/stats?start=2022-01-06%2011:00:23&end=2023-12-06%2011:00:23&uris=%2Fevents%2F1,%2Fevents%2F2&unique=true
+Accept: application/json
+Content-Type: application/json
+
+### Успешное получение всех записей без указания URI
+GET http://localhost:9090/stats?start=2022-01-06%2011:00:23&end=2023-12-06%2011:00:23
+Accept: application/json
+Content-Type: application/json
+
+### Успешное получение уникальных записей без указания URI
+GET http://localhost:9090/stats?start=2022-01-06%2011:00:23&end=2023-12-06%2011:00:23&unique=true
+Accept: application/json
+Content-Type: application/json
