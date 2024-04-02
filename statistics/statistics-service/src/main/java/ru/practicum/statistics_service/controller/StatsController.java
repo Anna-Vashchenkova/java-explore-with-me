@@ -25,9 +25,9 @@ public class StatsController {
 
     @PostMapping("/hit")
     public void saveHit(@Valid @RequestBody HitDto dto) {
-        if ((dto.getApp() == null) || (dto.getUri() == null) || (dto.getIp() == null) || (dto.getTimestamp() == null)) {
+        /*if ((dto.getApp() == null) || (dto.getUri() == null) || (dto.getIp() == null) || (dto.getTimestamp() == null)) {
             throw new ValidationException("Входные данные не корректны");
-        }
+        }*/
         LocalDateTime dateTime = LocalDateTime.parse(dto.getTimestamp(), formatter);
         statsService.saveHit(dto.getApp(), dto.getUri(), dto.getIp(), dateTime);
     }
@@ -47,10 +47,6 @@ public class StatsController {
         if (dateTimeStart.isAfter(dateTimeEnd)) {
             throw new ValidationException("Входные данные не корректны");
         }
-        if (!unique) {
-            return statsService.getStatNotUnique(dateTimeStart, dateTimeEnd, uris);
-        } else {
-            return statsService.getStatUnique(dateTimeStart, dateTimeEnd, uris);
-        }
+        return statsService.getStat(dateTimeStart, dateTimeEnd, uris, unique);
     }
 }

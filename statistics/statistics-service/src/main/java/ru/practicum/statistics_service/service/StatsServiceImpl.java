@@ -9,6 +9,7 @@ import ru.practicum.statistics_dto.HitOutcomeDto;
 import ru.practicum.statistics_service.repository.StatsRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -23,7 +24,16 @@ public class StatsServiceImpl implements StatsService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    public List<HitOutcomeDto> getStat(LocalDateTime dateTimeStart, LocalDateTime dateTimeEnd, ArrayList<String> uris, boolean unique) {
+        if (!unique) {
+            return getStatNotUnique(dateTimeStart, dateTimeEnd, uris);
+        } else {
+            return getStatUnique(dateTimeStart, dateTimeEnd, uris);
+        }
+    }
+
+    @Override
+    //@Transactional(readOnly = true)
     public List<HitOutcomeDto> getStatNotUnique(LocalDateTime start, LocalDateTime end, List<String> uris) {
         if (uris == null) {
             return repository.findByStartAndEnd(start, end);
@@ -37,7 +47,7 @@ public class StatsServiceImpl implements StatsService {
         if (uris == null) {
             return repository.findByStartAndEndAndIp(start, end);
         } else {
-            return  repository.findByStartAndEndAndUriAndIp(start, end, uris);
+            return repository.findByStartAndEndAndUriAndIp(start, end, uris);
         }
     }
 }
