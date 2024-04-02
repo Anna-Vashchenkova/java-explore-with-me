@@ -3,6 +3,7 @@ package ru.practicum.statistics_service.service;
 import ru.practicum.statistics_dto.HitOutcomeDto;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public interface StatsService {
@@ -11,4 +12,6 @@ public interface StatsService {
     List<HitOutcomeDto> getStatNotUnique(LocalDateTime start, LocalDateTime end, List<String> uris);
 
     List<HitOutcomeDto> getStatUnique(LocalDateTime start, LocalDateTime end, List<String> uris);
+
+    List<HitOutcomeDto> getStat(LocalDateTime dateTimeStart, LocalDateTime dateTimeEnd, ArrayList<String> uris, boolean unique);
 }
