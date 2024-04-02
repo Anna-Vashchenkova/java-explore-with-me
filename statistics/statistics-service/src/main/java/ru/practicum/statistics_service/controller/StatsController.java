@@ -25,9 +25,6 @@ public class StatsController {
 
     @PostMapping("/hit")
     public void saveHit(@Valid @RequestBody HitDto dto) {
-        /*if ((dto.getApp() == null) || (dto.getUri() == null) || (dto.getIp() == null) || (dto.getTimestamp() == null)) {
-            throw new ValidationException("Входные данные не корректны");
-        }*/
         LocalDateTime dateTime = LocalDateTime.parse(dto.getTimestamp(), formatter);
         statsService.saveHit(dto.getApp(), dto.getUri(), dto.getIp(), dateTime);
     }

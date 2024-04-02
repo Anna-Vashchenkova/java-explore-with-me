@@ -2,7 +2,6 @@ package ru.practicum.statistics_dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;

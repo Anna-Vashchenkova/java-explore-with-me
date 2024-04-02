@@ -3,7 +3,6 @@ package ru.practicum.statistics_service.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.statistics_service.Hit;
 import ru.practicum.statistics_dto.HitOutcomeDto;
 import ru.practicum.statistics_service.repository.StatsRepository;
@@ -33,7 +32,6 @@ public class StatsServiceImpl implements StatsService {
     }
 
     @Override
-    //@Transactional(readOnly = true)
     public List<HitOutcomeDto> getStatNotUnique(LocalDateTime start, LocalDateTime end, List<String> uris) {
         if (uris == null) {
             return repository.findByStartAndEnd(start, end);
