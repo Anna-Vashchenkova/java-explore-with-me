@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 @UtilityClass
 public final class UserMapper {
 
-    public static User toEntityUser(NewUserRequest dto) {
+    public static User toUser(NewUserRequest dto) {
         return User.builder()
                 .email(dto.getEmail())
                 .name(dto.getName())

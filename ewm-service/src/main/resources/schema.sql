@@ -7,6 +7,13 @@ create table if not exists users
     CONSTRAINT UQ_USER_EMAIL UNIQUE (email)
     );
 
+drop table if exists categories cascade;
+create table if not exists categories
+(
+    id BIGINT generated always as identity primary key,
+    name varchar(50) not null
+    );
+
 drop table if exists compilations cascade;
 create table if not exists compilations
 (
