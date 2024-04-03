@@ -19,7 +19,7 @@ public class UserController {
 
     @GetMapping("/admin/users")
     public List<UserDto> getUsers(
-            @RequestParam List<Long> ids,
+            @RequestParam (required = false) List<Long> ids,
             @RequestParam(name = "from", defaultValue = "0") int from,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {

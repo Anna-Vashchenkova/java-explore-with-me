@@ -9,7 +9,7 @@ import ru.practicum.ewm_main_service.user.User;
 
 import java.util.List;
 
-public interface UserRepository extends JpaRepository {
+public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("select u from User as u order by u.id")
     Page<User> findAll(Pageable pageable);
