@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ru.practicum.ewm_main_service.exception.DataNotFoundException;
 import ru.practicum.ewm_main_service.category.Category;
 import ru.practicum.ewm_main_service.category.dto.CategoryDto;
 import ru.practicum.ewm_main_service.category.dto.CategoryMapper;
@@ -12,7 +13,6 @@ import ru.practicum.ewm_main_service.category.dto.NewCategoryDto;
 import ru.practicum.ewm_main_service.category.repository.CategoryRepository;
 import ru.practicum.ewm_main_service.exception.DataAlreadyExists;
 import ru.practicum.ewm_main_service.exception.ValidationException;
-import ru.practicum.ewm_main_service.user.User;
 
 import java.util.List;
 
@@ -39,5 +39,32 @@ public class CategoryServiceImpl implements CategoryService {
         List<Category> categories = repository.findAll(PageRequest.of(from, size, sortById)).getContent();
         log.info("Number of categories: {}", categories.size());
         return CategoryMapper.toCategoryDtoList(categories);
+    }
+
+    @Override
+    public CategoryDto getCategoryById(long catId) {
+        Category category = repository.findById(catId).orElseThrow(() -> new DataNotFoundException("Категория с таким id не найдена."));
+        return CategoryMapper.toCategoryDto(category);
+    }
+
+    @Override
+    public CategoryDto updateCategory(long catId, CategoryDto dto) {
+        if (dto == null) {
+            throw new ValidationException("Не переданы данные категории. Ошибка валидации.");
+        }
+        if (dto.getId() == null) {
+            dto.setId(catId);
+        }
+        Category categoryUpdate = repository.findById(catId)
+                .orElseThrow(() -> new DataNotFoundException("Категория с ID=" + catId + " не найдена!"));
+        if (dto.getName() != null) {
+            Category categoryByName = repository.findCategoryByName(dto.getName());
+            if (categoryByName == null) {
+                categoryUpdate.setName(dto.getName());
+            } else if (!categoryByName.getId().equals(catId)) {
+                throw new DataAlreadyExists("Категория с таким названием уже существует.");
+            }
+        }
+        return CategoryMapper.toCategoryDto(repository.save(categoryUpdate));
     }
 }

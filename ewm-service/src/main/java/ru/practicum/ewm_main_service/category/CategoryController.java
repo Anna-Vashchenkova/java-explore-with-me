@@ -35,4 +35,16 @@ public class CategoryController {
         }
         return categoryService.getCategories(from, size);
     }
+
+    @GetMapping("/categories/{catId}")
+    public CategoryDto getCategoryById(@PathVariable(name = "catId") long catId) {
+        log.info("Получен запрос на получение информации о категории с ID={}", catId);
+        return categoryService.getCategoryById(catId);
+    }
+
+    @PatchMapping("/admin/categories/{catId}")
+    public CategoryDto updateCategory(@PathVariable(name = "catId") long catId,
+                                      @RequestBody CategoryDto dto) {
+        return categoryService.updateCategory(catId, dto);
+    }
 }

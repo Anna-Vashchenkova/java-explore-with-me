@@ -9,4 +9,8 @@ public interface CategoryService {
     CategoryDto addNewCategory(NewCategoryDto dto);
 
     List<CategoryDto> getCategories(int from, int size);
+
+    CategoryDto getCategoryById(long catId);
+
+    CategoryDto updateCategory(long catId, CategoryDto dto);
 }
