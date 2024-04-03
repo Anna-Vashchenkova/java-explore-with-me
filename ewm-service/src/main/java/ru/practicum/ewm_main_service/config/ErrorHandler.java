@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.ewm_main_service.exception.DataNotFoundException;
 import ru.practicum.ewm_main_service.exception.ValidationException;
 
-import java.util.Collection;
 import java.util.Collections;
 
 @Slf4j
@@ -21,7 +20,7 @@ public class ErrorHandler {
         return new ApiError(
                 Collections.singletonList(e.getMessage()),
                 e.getMessage(),
-                "Bad Request",
+                "Incorrectly made request.",
                 HttpStatus.BAD_REQUEST.toString()
                 );
     }

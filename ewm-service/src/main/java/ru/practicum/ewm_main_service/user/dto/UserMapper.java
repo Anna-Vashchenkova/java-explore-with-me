@@ -8,25 +8,25 @@ import java.util.stream.Collectors;
 @UtilityClass
 public final class UserMapper {
 
-    public static User toEntity(NewUserRequest dto) {
+    public static User toEntityUser(NewUserRequest dto) {
         return User.builder()
                 .email(dto.getEmail())
                 .name(dto.getName())
                 .build();
     }
 
-    public static UserDto toUserDto(User entity) {
+    public static UserDto toUserDto(User user) {
         return UserDto.builder()
-                .id(entity.getId())
-                .name(entity.getName())
-                .email(entity.getEmail())
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
                 .build();
     }
 
-    public static UserShortDto toUserShortDto(User entity) {
+    public static UserShortDto toUserShortDto(User user) {
         return UserShortDto.builder()
-                .id(entity.getId())
-                .email(entity.getEmail())
+                .id(user.getId())
+                .email(user.getEmail())
                 .build();
     }
 

@@ -2,9 +2,7 @@ package ru.practicum.ewm_main_service.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm_main_service.exception.ValidationException;
 import ru.practicum.ewm_main_service.user.dto.UserDto;
 import ru.practicum.ewm_main_service.user.service.UserService;
@@ -28,5 +26,10 @@ public class UserController {
             throw new ValidationException("Неверные параметры запроса");
         }
         return userService.getUsers(ids, from, size);
+    }
+
+    @PostMapping("admin/users")
+    public UserDto addNewUser(@RequestBody UserDto dto) {
+        return userService.addNewUser(dto);
     }
 }
