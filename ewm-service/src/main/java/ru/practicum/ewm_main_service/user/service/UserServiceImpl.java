@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ru.practicum.ewm_main_service.exception.DataAlreadyExists;
 import ru.practicum.ewm_main_service.exception.ValidationException;
 import ru.practicum.ewm_main_service.user.User;
 import ru.practicum.ewm_main_service.user.dto.UserDto;
@@ -36,7 +37,16 @@ public class UserServiceImpl implements UserService {
         if ((dto.getEmail() == null) || (dto.getName() == null)) {
             throw new ValidationException("Incorrectly made request.");
         }
+        if (repository.findUserByEmail(dto.getEmail()) != null) {
+            throw new DataAlreadyExists("could not execute statement");
+        }
         User user = repository.save(new User(null, dto.getEmail(), dto.getName()));
         return UserMapper.toUserDto(user);
+    }
+
+    @Override
+    public void deleteUserById(Long userId) {
+
+        repository.deleteById(userId);
     }
 }

@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.practicum.ewm_main_service.exception.DataAlreadyExists;
 import ru.practicum.ewm_main_service.exception.DataNotFoundException;
 import ru.practicum.ewm_main_service.exception.ValidationException;
 
@@ -28,12 +29,24 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ApiError handleInvalidEmail(final DataNotFoundException e) {
-        log.info("Ошибка валидации");
+        log.info("Ошибка - данные не найдены");
         return new ApiError(
                 Collections.singletonList(e.getMessage()),
                 e.getMessage(),
                 "Not Found",
                 HttpStatus.NOT_FOUND.toString()
+        );
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handleInvalidEmail(final DataAlreadyExists e) {
+        log.info("Ошибка");
+        return new ApiError(
+                Collections.singletonList(e.getMessage()),
+                e.getMessage(),
+                "Integrity constraint has been violated.",
+                HttpStatus.CONFLICT.toString()
         );
     }
 }

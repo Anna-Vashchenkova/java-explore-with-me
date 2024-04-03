@@ -9,4 +9,6 @@ public interface UserService {
     List<UserDto> getUsers(List<Long> ids, int from, int size);
 
     UserDto addNewUser(UserDto dto);
+
+    void deleteUserById(Long userId);
 }

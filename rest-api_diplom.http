@@ -9,15 +9,26 @@ Content-Type: application/json
   "name": "Иван Петров"
 }
 
-### Успешное добавление
-POST http://localhost:8080/
+###Неуспешное добавление users 2
+POST http://localhost:8080/admin/users
 Accept: application/json
 Content-Type: application/json
+
+{
+  "email": "ivan.petrov@practicummail.ru",
+  "name": "Аня Петрова"
+}
+
 
 
 
 ### Успешное получение всех записей
 GET http://localhost:8080/admin/users?from=0&size=10
+Accept: application/json
+Content-Type: application/json
+
+###
+DELETE http://localhost:8080/admin/users/1
 Accept: application/json
 Content-Type: application/json
 
