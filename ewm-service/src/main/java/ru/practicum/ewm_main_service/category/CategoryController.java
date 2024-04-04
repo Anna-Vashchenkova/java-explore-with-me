@@ -45,6 +45,15 @@ public class CategoryController {
     @PatchMapping("/admin/categories/{catId}")
     public CategoryDto updateCategory(@PathVariable(name = "catId") long catId,
                                       @RequestBody CategoryDto dto) {
+        log.info("Получен запрос на обновление данных категории '{}'", catId);
         return categoryService.updateCategory(catId, dto);
+    }
+
+    @DeleteMapping("admin/categories/{catId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteCategoryById(@PathVariable Long catId) {
+        log.info("Получен запрос - удалить данные категории '{}'", catId);
+        categoryService.deleteCategoryById(catId);
+        //Обратите внимание: с категорией не должно быть связано ни одного события.
     }
 }

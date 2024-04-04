@@ -14,6 +14,31 @@ create table if not exists categories
     name varchar(50) not null
     );
 
+drop table if exists events cascade;
+create table if not exists events
+(
+    id bigint generated always as identity primary key,
+    title varchar(120) not null,
+    annotation varchar(2000) not null,
+    description varchar(7000),
+    category_id bigint not null,
+    state varchar(10) not null,
+    lat real not null,
+    lon real not null,
+    event_date timestamp without time zone not null,
+    created_on timestamp without time zone not null,
+    published_on timestamp without time zone,
+    initiator_id bigint not null,
+    paid bool not null,
+    participant_limit  bigint,
+    request_moderation boolean,
+    confirmed_requests bigint,
+    views bigint,
+    constraint pk_event primary key (id),
+    foreign key (category_id) references categories (category_id) on delete cascade,
+    foreign key (initiator_id) references users (user_id) on delete cascade
+    );
+
 drop table if exists compilations cascade;
 create table if not exists compilations
 (

@@ -67,4 +67,17 @@ public class CategoryServiceImpl implements CategoryService {
         }
         return CategoryMapper.toCategoryDto(repository.save(categoryUpdate));
     }
+
+    @Override
+    public Category get(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException(String.format("Категория не найдена id = %s", id)));
+    }
+
+    @Override
+    public void deleteCategoryById(Long catId) {
+
+    }
+
+
 }
