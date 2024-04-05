@@ -34,9 +34,8 @@ create table if not exists events
     request_moderation boolean,
     confirmed_requests bigint,
     views bigint,
-    constraint pk_event primary key (id),
-    foreign key (category_id) references categories (category_id) on delete cascade,
-    foreign key (initiator_id) references users (user_id) on delete cascade
+    foreign key (category_id) references categories (id) on delete cascade,
+    foreign key (initiator_id) references users (id) on delete cascade
     );
 
 drop table if exists compilations cascade;
