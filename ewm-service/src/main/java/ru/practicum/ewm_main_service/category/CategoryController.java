@@ -21,6 +21,7 @@ public class CategoryController {
     @PostMapping("/admin/categories")
     @ResponseStatus(HttpStatus.CREATED)
     public CategoryDto addNewCategory(@RequestBody NewCategoryDto dto) {
+        log.info("Получен запрос на добавление новой категории {}", dto.getName());
         return categoryService.addNewCategory(dto);
     }
 
@@ -29,7 +30,7 @@ public class CategoryController {
             @RequestParam(name = "from", defaultValue = "0") int from,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
-        log.info("Получен запрос на получение информации о категориях");
+        log.info("Получен запрос на получение информации о категориях по {} элементов на странице {}", size, from);
         if ((from < 0) || (size < 1)) {
             throw new ValidationException("Неверные параметры запроса");
         }

@@ -22,7 +22,7 @@ public class UserController {
             @RequestParam(name = "from", defaultValue = "0") int from,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
-        log.info("Получен запрос на получение информации о пользователях");
+        log.info("Получен запрос на получение информации о пользователях по {} элементов на {} странице", size, from);
         if ((from < 0) || (size < 1)) {
             throw new ValidationException("Неверные параметры запроса");
         }
@@ -32,13 +32,14 @@ public class UserController {
     @PostMapping("admin/users")
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto addNewUser(@RequestBody UserDto dto) {
+        log.info("Получен запрос на добавление нового пользователя с именем {}", dto.getName());
         return userService.addNewUser(dto);
     }
 
     @DeleteMapping("admin/users/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUserById(@PathVariable Long userId) {
-        log.info("Получен запрос - удалить данные пользователя '{}'", userId);
+        log.info("Получен запрос - удалить данные пользователя с ID '{}'", userId);
         userService.deleteUserById(userId);
     }
 }

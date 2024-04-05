@@ -17,6 +17,7 @@ import ru.practicum.ewm_main_service.event.model.Location;
 import ru.practicum.ewm_main_service.event.model.Status;
 import ru.practicum.ewm_main_service.event.repository.EventRepository;
 import ru.practicum.ewm_main_service.exception.DataAlreadyExists;
+import ru.practicum.ewm_main_service.exception.DataNotFoundException;
 import ru.practicum.ewm_main_service.user.service.UserService;
 
 import java.time.LocalDateTime;
@@ -66,5 +67,12 @@ public class EventServiceImpl implements EventService {
         Sort sortById = Sort.by(Sort.Direction.ASC, "id");
         Page<Event> allByUserId = repository.findAllByUserId(userId, PageRequest.of(from, size, sortById));
         return allByUserId.isEmpty() ? new ArrayList<>() : allByUserId.getContent().stream().map(EventMapper::toEventShortDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public EventFullDto getEventById(long userId, long eventId) {
+        Event event = repository.findByInitiatorIdAndId(userId, eventId)
+                .orElseThrow(() -> new DataNotFoundException(String.format("Событие с ID %s, созданное пользователем с ID %s, не найдено", eventId, userId)));
+        return EventMapper.toEventFullDto(event);
     }
 }
