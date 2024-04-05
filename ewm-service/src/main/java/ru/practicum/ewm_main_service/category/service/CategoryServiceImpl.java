@@ -37,7 +37,6 @@ public class CategoryServiceImpl implements CategoryService {
     public List<CategoryDto> getCategories(int from, int size) {
         Sort sortById = Sort.by(Sort.Direction.ASC, "id");
         List<Category> categories = repository.findAll(PageRequest.of(from, size, sortById)).getContent();
-        log.info("Number of categories: {}", categories.size());
         return CategoryMapper.toCategoryDtoList(categories);
     }
 

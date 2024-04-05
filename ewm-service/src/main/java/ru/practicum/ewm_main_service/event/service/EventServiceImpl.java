@@ -2,24 +2,28 @@ package ru.practicum.ewm_main_service.event.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm_main_service.category.Category;
-import ru.practicum.ewm_main_service.category.dto.CategoryDto;
-import ru.practicum.ewm_main_service.category.dto.CategoryMapper;
 import ru.practicum.ewm_main_service.category.service.CategoryService;
 import ru.practicum.ewm_main_service.event.dto.EventFullDto;
 import ru.practicum.ewm_main_service.event.dto.EventMapper;
+import ru.practicum.ewm_main_service.event.dto.EventShortDto;
 import ru.practicum.ewm_main_service.event.dto.NewEventDto;
 import ru.practicum.ewm_main_service.event.model.Event;
 import ru.practicum.ewm_main_service.event.model.Location;
 import ru.practicum.ewm_main_service.event.model.Status;
 import ru.practicum.ewm_main_service.event.repository.EventRepository;
 import ru.practicum.ewm_main_service.exception.DataAlreadyExists;
-import ru.practicum.ewm_main_service.exception.ValidationException;
 import ru.practicum.ewm_main_service.user.service.UserService;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -55,5 +59,12 @@ public class EventServiceImpl implements EventService {
                 0
                 ));
         return EventMapper.toEventFullDto(event);
+    }
+
+    @Override
+    public List<EventShortDto> getEvents(long userId, int from, int size) {
+        Sort sortById = Sort.by(Sort.Direction.ASC, "id");
+        Page<Event> allByUserId = repository.findAllByUserId(userId, PageRequest.of(from, size, sortById));
+        return allByUserId.isEmpty() ? new ArrayList<>() : allByUserId.getContent().stream().map(EventMapper::toEventShortDto).collect(Collectors.toList());
     }
 }

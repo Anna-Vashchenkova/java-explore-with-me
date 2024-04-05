@@ -1,8 +1,13 @@
 package ru.practicum.ewm_main_service.event.service;
 
 import ru.practicum.ewm_main_service.event.dto.EventFullDto;
+import ru.practicum.ewm_main_service.event.dto.EventShortDto;
 import ru.practicum.ewm_main_service.event.dto.NewEventDto;
+
+import java.util.List;
 
 public interface EventService {
     EventFullDto addNewEvent(long userId, NewEventDto dto);
+
+    List<EventShortDto> getEvents(long userId, int from, int size);
 }

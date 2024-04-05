@@ -79,19 +79,19 @@ public final class EventMapper {
                 .build();
     }*/
 
-    /*public static EventShortDto toEventShortDto(Event entity) {
+    public static EventShortDto toEventShortDto(Event entity) {
         return EventShortDto.builder()
                 .id(entity.getId())
-                .annotation(entity.getAnnotation())
-                .category(CategoryMapper.toDto(entity.getCategory()))
-                .confirmedRequests(entity.getConfirmedRequests())
-                .eventDate(entity.getDate())
-                .initiator(UserMapper.toUserShortDto(entity.getInitiator()))
-                .paid(entity.getPaid())
                 .title(entity.getTitle())
+                .annotation(entity.getAnnotation())
+                .category(CategoryMapper.toCategoryDto(entity.getCategory()))
+                .eventDate(entity.getEventDate().format(formatter))
+                .initiator(UserMapper.toUserShortDto(entity.getInitiator()))
+                .paid(entity.isPaid())
+                .confirmedRequests(entity.getConfirmedRequests())
                 .views(entity.getViews())
                 .build();
-    }*/
+    }
 
     /*public static Set<EventShortDto> toEventShortDtoList(Set<Event> events) {
         return events.stream().map(EventMapper::toEventShortDto).collect(Collectors.toSet());
