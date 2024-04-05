@@ -100,7 +100,7 @@ public class EventServiceImpl implements EventService {
         if (dto.getRequestModeration() != null) {
             resultEvent.setRequestModeration(eventUpdate.isRequestModeration());
         }
-        getFields(resultEvent, eventUpdate);
+        setFields(resultEvent, eventUpdate);
 
         if (dto.getStateAction().toString().equals(UpdateEventUserRequest.StateAction.CANCEL_REVIEW.toString())) {
             resultEvent.setState(Status.CANCELED);
@@ -113,7 +113,7 @@ public class EventServiceImpl implements EventService {
 
     }
 
-    private Event getFields(Event resultEvent, Event eventUpdate) {
+    private void setFields(Event resultEvent, Event eventUpdate) {
         if (eventUpdate.getTitle() != null) {
             resultEvent.setTitle(eventUpdate.getTitle());
         }
@@ -135,6 +135,5 @@ public class EventServiceImpl implements EventService {
         if (eventUpdate.getParticipantLimit() != 0) {
             resultEvent.setParticipantLimit(eventUpdate.getParticipantLimit());
         }
-        return resultEvent;
     }
 }
