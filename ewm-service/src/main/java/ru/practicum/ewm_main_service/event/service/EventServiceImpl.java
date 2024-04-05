@@ -8,10 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm_main_service.category.Category;
 import ru.practicum.ewm_main_service.category.service.CategoryService;
-import ru.practicum.ewm_main_service.event.dto.EventFullDto;
-import ru.practicum.ewm_main_service.event.dto.EventMapper;
-import ru.practicum.ewm_main_service.event.dto.EventShortDto;
-import ru.practicum.ewm_main_service.event.dto.NewEventDto;
+import ru.practicum.ewm_main_service.event.dto.*;
 import ru.practicum.ewm_main_service.event.model.Event;
 import ru.practicum.ewm_main_service.event.model.Location;
 import ru.practicum.ewm_main_service.event.model.Status;
@@ -40,7 +37,7 @@ public class EventServiceImpl implements EventService {
         Category category = categoryService.get(dto.getCategory());
         LocalDateTime eventDate = LocalDateTime.parse(dto.getEventDate(), formatter);
         if (eventDate != null && eventDate.isBefore(LocalDateTime.now().plusHours(2))) {
-            throw new DataAlreadyExists("Field: eventDate. Error: должно содержать дату, которая еще не наступила. Value: " + eventDate);
+            throw new DataAlreadyExists(String.format("Поле eventDate %s должно содержать дату, которая еще не наступила.", eventDate));
         }
         Event event = repository.save(new Event(null,
                 dto.getTitle(),
@@ -74,5 +71,70 @@ public class EventServiceImpl implements EventService {
         Event event = repository.findByInitiatorIdAndId(userId, eventId)
                 .orElseThrow(() -> new DataNotFoundException(String.format("Событие с ID %s, созданное пользователем с ID %s, не найдено", eventId, userId)));
         return EventMapper.toEventFullDto(event);
+    }
+
+    @Override
+    public EventFullDto updateEvent(long userId, long eventId, UpdateEventUserRequest dto) {
+        Event resultEvent = repository.findByInitiatorIdAndId(userId, eventId)
+                .orElseThrow(() -> new DataNotFoundException(
+                        String.format("Событие с ID %s, созданное пользователем с ID %s, не найдено\"", eventId, userId)));
+        Event eventUpdate = EventMapper.toUpdateEvent(dto);
+        LocalDateTime eventDate;
+        if (dto.getEventDate() != null) {
+            eventDate = LocalDateTime.parse(dto.getEventDate(), formatter);
+            if (eventDate != null && eventDate.isBefore(LocalDateTime.now().plusHours(2))) {
+                throw new DataAlreadyExists(String.format("Поле eventDate %s должно содержать дату, которая еще не наступила.", eventDate));
+            }
+        }
+        if (dto.getCategory() != null) {
+            eventUpdate.setCategory(categoryService.getOptionalCategoryById(dto.getCategory())
+                    .orElseThrow(() -> new DataNotFoundException(String.format("Категория с ID %s не найдена",
+                            dto.getCategory()))));
+        }
+        if (resultEvent.getState().equals(Status.PUBLISHED)) {
+            throw new DataAlreadyExists("Событие не должно быть опубликовано");
+        }
+        if (dto.getPaid() != null) {
+            resultEvent.setPaid(eventUpdate.isPaid());
+        }
+        if (dto.getRequestModeration() != null) {
+            resultEvent.setRequestModeration(eventUpdate.isRequestModeration());
+        }
+        getFields(resultEvent, eventUpdate);
+
+        if (dto.getStateAction().toString().equals(UpdateEventUserRequest.StateAction.CANCEL_REVIEW.toString())) {
+            resultEvent.setState(Status.CANCELED);
+        } else if (UpdateEventUserRequest.StateAction.SEND_TO_REVIEW.toString().equals(dto.getStateAction().toString())) {
+            resultEvent.setState(Status.PENDING);
+        }
+        repository.save(resultEvent);
+        log.info("Update event: {}", resultEvent.getTitle());
+        return EventMapper.toEventFullDto(resultEvent);
+
+    }
+
+    private Event getFields(Event resultEvent, Event eventUpdate) {
+        if (eventUpdate.getTitle() != null) {
+            resultEvent.setTitle(eventUpdate.getTitle());
+        }
+        if (eventUpdate.getAnnotation() != null) {
+            resultEvent.setAnnotation(eventUpdate.getAnnotation());
+        }
+        if (eventUpdate.getDescription() != null) {
+            resultEvent.setDescription(eventUpdate.getDescription());
+        }
+        if (eventUpdate.getCategory() != null) {
+            resultEvent.setCategory(eventUpdate.getCategory());
+        }
+        if (eventUpdate.getLocation() != null) {
+            resultEvent.setLocation(eventUpdate.getLocation());
+        }
+        if (eventUpdate.getEventDate() != null) {
+            resultEvent.setEventDate(eventUpdate.getEventDate());
+        }
+        if (eventUpdate.getParticipantLimit() != 0) {
+            resultEvent.setParticipantLimit(eventUpdate.getParticipantLimit());
+        }
+        return resultEvent;
     }
 }

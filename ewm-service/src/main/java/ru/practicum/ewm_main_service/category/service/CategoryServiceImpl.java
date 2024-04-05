@@ -15,6 +15,7 @@ import ru.practicum.ewm_main_service.exception.DataAlreadyExists;
 import ru.practicum.ewm_main_service.exception.ValidationException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -44,6 +45,11 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDto getCategoryById(long catId) {
         Category category = repository.findById(catId).orElseThrow(() -> new DataNotFoundException("Категория с таким id не найдена."));
         return CategoryMapper.toCategoryDto(category);
+    }
+
+    @Override
+    public Optional<Category> getOptionalCategoryById(long catId) {
+        return repository.findById(catId);
     }
 
     @Override

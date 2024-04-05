@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm_main_service.event.dto.EventFullDto;
 import ru.practicum.ewm_main_service.event.dto.EventShortDto;
 import ru.practicum.ewm_main_service.event.dto.NewEventDto;
+import ru.practicum.ewm_main_service.event.dto.UpdateEventUserRequest;
 import ru.practicum.ewm_main_service.event.service.EventService;
 import ru.practicum.ewm_main_service.exception.ValidationException;
 
@@ -45,4 +46,11 @@ public class EventController {
         return eventService.getEventById(userId, eventId);
     }
 
+    @PatchMapping("users/{userId}/events/{eventId}")
+    public EventFullDto updateEvent(@PathVariable(name = "userId") long userId,
+                                    @PathVariable(name = "eventId") long eventId,
+                                    @RequestBody UpdateEventUserRequest dto) {
+        log.info("Получен запрос на бновление информации о событии с ID {}, добавленном пользователем с ID {}", eventId, userId);
+        return eventService.updateEvent(userId, eventId, dto);
+    }
 }

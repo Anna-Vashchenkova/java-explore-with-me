@@ -66,18 +66,18 @@ public final class EventMapper {
                 .build();
     }*/
 
-    /*public static Event toEntity(UpdateEventUserRequest dto) {
+    public static Event toUpdateEvent(UpdateEventUserRequest dto) {
         return Event.builder()
+                .title(dto.getTitle())
                 .annotation(dto.getAnnotation())
                 .description(dto.getDescription())
-                .date(dto.getEventDate())
-                .paid(dto.getPaid())
+                .eventDate(dto.getEventDate() != null ? LocalDateTime.parse(dto.getEventDate(), formatter) : null)
+                .paid(dto.getPaid() != null ? dto.getPaid() : false)
                 .location(dto.getLocation() != null ? new Location(dto.getLocation().getLat(),
                         dto.getLocation().getLon()) : null)
                 .participantLimit(dto.getParticipantLimit())
-                .title(dto.getTitle())
                 .build();
-    }*/
+    }
 
     public static EventShortDto toEventShortDto(Event entity) {
         return EventShortDto.builder()
@@ -92,8 +92,4 @@ public final class EventMapper {
                 .views(entity.getViews())
                 .build();
     }
-
-    /*public static Set<EventShortDto> toEventShortDtoList(Set<Event> events) {
-        return events.stream().map(EventMapper::toEventShortDto).collect(Collectors.toSet());
-    }*/
 }
