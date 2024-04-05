@@ -43,7 +43,7 @@ public final class EventMapper {
                 .location(new LocationDto(entity.getLocation().getLat(), entity.getLocation().getLon()))
                 .paid(entity.isPaid())
                 .participantLimit(entity.getParticipantLimit())
-                .publishedOn(entity.getPublishedOn().format(formatter))
+                .publishedOn(entity.getPublishedOn() != null ? entity.getPublishedOn().format(formatter) : null)
                 .requestModeration(entity.isRequestModeration())
                 .state(entity.getState().name())
                 .title(entity.getTitle())
