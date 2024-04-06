@@ -15,4 +15,6 @@ public interface EventService {
     EventFullDto getEventById(long userId, long eventId);
 
     EventFullDto updateEvent(long userId, long eventId, UpdateEventUserRequest dto);
+
+    List<EventFullDto> searchEvent(List<Long> users, List<String> states, List<Long> categories, String rangeStart, String rangeEnd, int from, int size);
 }

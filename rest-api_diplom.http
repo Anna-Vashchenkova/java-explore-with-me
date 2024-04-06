@@ -32,3 +32,12 @@ DELETE http://localhost:8080/admin/users/1
 Accept: application/json
 Content-Type: application/json
 
+### поиск событий по фильтрам - тут получаю пустой список и это ошибка
+GET http://localhost:8080/admin/events?users=0&states=PUBLISHED&categories=0&rangeStart=2022-01-06%2013%3A30%3A38&rangeEnd=2097-09-06%2013%3A30%3A38&from=0&size=1000
+Accept: application/json
+Content-Type: application/json
+
+### поиск событий по фильтрам - тут всё ок
+GET http://localhost:8080/admin/events?users=4&states=PENDING&categories=6&rangeStart=2022-01-06%2013%3A30%3A38&rangeEnd=2097-09-06%2013%3A30%3A38&from=0&size=1000
+Accept: application/json
+Content-Type: application/json

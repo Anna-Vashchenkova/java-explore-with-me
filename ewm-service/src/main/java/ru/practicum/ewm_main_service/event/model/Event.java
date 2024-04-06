@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @Builder
+@EqualsAndHashCode
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

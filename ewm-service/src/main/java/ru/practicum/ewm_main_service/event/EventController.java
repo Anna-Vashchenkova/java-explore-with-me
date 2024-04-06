@@ -50,7 +50,19 @@ public class EventController {
     public EventFullDto updateEvent(@PathVariable(name = "userId") long userId,
                                     @PathVariable(name = "eventId") long eventId,
                                     @RequestBody UpdateEventUserRequest dto) {
-        log.info("Получен запрос на бновление информации о событии с ID {}, добавленном пользователем с ID {}", eventId, userId);
+        log.info("Получен запрос на обновление информации о событии с ID {}, добавленном пользователем с ID {}", eventId, userId);
         return eventService.updateEvent(userId, eventId, dto);
+    }
+
+    @GetMapping("/admin/events")
+    public List<EventFullDto> searchEvent(@RequestParam(required = false) List<Long> users,
+                                          @RequestParam(required = false) List<String> states,
+                                          @RequestParam(required = false) List<Long> categories,
+                                          @RequestParam(required = false) String rangeStart,
+                                          @RequestParam(required = false) String rangeEnd,
+                                          @RequestParam(name = "from", defaultValue = "0") int from,
+                                          @RequestParam(name = "size", defaultValue = "10") int size) {
+        log.info("Получен запрос на поиск событий по фильтрам ");
+        return eventService.searchEvent(users, states, categories, rangeStart, rangeEnd, from / size, size);
     }
 }

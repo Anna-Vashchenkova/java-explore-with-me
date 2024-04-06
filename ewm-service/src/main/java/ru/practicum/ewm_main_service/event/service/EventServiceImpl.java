@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -111,6 +112,26 @@ public class EventServiceImpl implements EventService {
         log.info("Update event: {}", resultEvent.getTitle());
         return EventMapper.toEventFullDto(resultEvent);
 
+    }
+
+    @Override
+    public List<EventFullDto> searchEvent(List<Long> users, List<String> states, List<Long> categories, String rangeStart, String rangeEnd, int from, int size) {
+        Sort sortById = Sort.by(Sort.Direction.ASC, "id");
+        if (users.get(0) < 1) {
+            users = null;
+        }
+        if (categories.get(0) < 1) {
+            categories = null;
+        }
+
+        List<Status> statusEnum = null;
+        if (states != null) {
+            statusEnum = states.stream().map(Status::valueOf).filter(Objects::nonNull).collect(Collectors.toList());
+        }
+        LocalDateTime start = LocalDateTime.parse(rangeStart, formatter);
+        LocalDateTime end = LocalDateTime.parse(rangeEnd, formatter);
+        Page<Event> byParams = repository.findByParams(users, statusEnum, categories, start, end, PageRequest.of(from, size, sortById));
+        return byParams.isEmpty() ? new ArrayList<>() : byParams.getContent().stream().map(EventMapper::toEventFullDto).collect(Collectors.toList());
     }
 
     private void setFields(Event resultEvent, Event eventUpdate) {

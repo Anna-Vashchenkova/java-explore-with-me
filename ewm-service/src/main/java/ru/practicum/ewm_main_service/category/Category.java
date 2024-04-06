@@ -13,6 +13,7 @@ import javax.validation.constraints.Size;
 @Setter
 @ToString
 @Builder
+@EqualsAndHashCode
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
