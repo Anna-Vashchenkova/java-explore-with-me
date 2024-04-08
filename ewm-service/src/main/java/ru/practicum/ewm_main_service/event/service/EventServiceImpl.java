@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm_main_service.category.Category;
 import ru.practicum.ewm_main_service.category.service.CategoryService;
@@ -13,6 +14,7 @@ import ru.practicum.ewm_main_service.event.model.Event;
 import ru.practicum.ewm_main_service.event.model.Location;
 import ru.practicum.ewm_main_service.event.model.Status;
 import ru.practicum.ewm_main_service.event.repository.EventRepository;
+import ru.practicum.ewm_main_service.event.specification.EventSpecification;
 import ru.practicum.ewm_main_service.exception.DataAlreadyExists;
 import ru.practicum.ewm_main_service.exception.DataNotFoundException;
 import ru.practicum.ewm_main_service.user.service.UserService;
@@ -119,10 +121,10 @@ public class EventServiceImpl implements EventService {
         Sort sortById = Sort.by(Sort.Direction.ASC, "id");
         if (users.get(0) < 1) {
             users = null;
-        }
+        }/*
         if (categories.get(0) < 1) {
             categories = null;
-        }
+        }*/
 
         List<Status> statusEnum = null;
         if (states != null) {
@@ -130,8 +132,13 @@ public class EventServiceImpl implements EventService {
         }
         LocalDateTime start = LocalDateTime.parse(rangeStart, formatter);
         LocalDateTime end = LocalDateTime.parse(rangeEnd, formatter);
-        Page<Event> byParams = repository.findByParams(users, statusEnum, categories, start, end, PageRequest.of(from, size, sortById));
-        return byParams.isEmpty() ? new ArrayList<>() : byParams.getContent().stream().map(EventMapper::toEventFullDto).collect(Collectors.toList());
+       /* Page<Event> byParams = repository.findByParams(users, statusEnum, categories, start, end, PageRequest.of(from, size, sortById));
+        return byParams.isEmpty() ? new ArrayList<>() : byParams.getContent().stream().map(EventMapper::toEventFullDto).collect(Collectors.toList());*/
+        Page<Event> events = repository.findAll(
+                Specification.where(EventSpecification.userIdsIn(users))
+                        .and(EventSpecification.statusIn(statusEnum)),
+                PageRequest.of(from, size, sortById));
+        return events.isEmpty() ? new ArrayList<>() : events.getContent().stream().map(EventMapper::toEventFullDto).collect(Collectors.toList());
     }
 
     private void setFields(Event resultEvent, Event eventUpdate) {
