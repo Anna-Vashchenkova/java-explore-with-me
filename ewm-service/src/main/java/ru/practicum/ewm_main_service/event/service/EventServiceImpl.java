@@ -121,10 +121,10 @@ public class EventServiceImpl implements EventService {
         Sort sortById = Sort.by(Sort.Direction.ASC, "id");
         if (users.get(0) < 1) {
             users = null;
-        }/*
+        }
         if (categories.get(0) < 1) {
             categories = null;
-        }*/
+        }
 
         List<Status> statusEnum = null;
         if (states != null) {
@@ -136,9 +136,12 @@ public class EventServiceImpl implements EventService {
         return byParams.isEmpty() ? new ArrayList<>() : byParams.getContent().stream().map(EventMapper::toEventFullDto).collect(Collectors.toList());*/
         Page<Event> events = repository.findAll(
                 Specification.where(EventSpecification.userIdsIn(users))
-                        .and(EventSpecification.statusIn(statusEnum)),
+                        .and(EventSpecification.statusIn(statusEnum))
+                        .and(EventSpecification.categoryIdsIn(categories))
+                        .and(EventSpecification.startAfter(start))
+                        .and(EventSpecification.endBefore(end)),
                 PageRequest.of(from, size, sortById));
-        return events.isEmpty() ? new ArrayList<>() : events.getContent().stream().map(EventMapper::toEventFullDto).collect(Collectors.toList());
+        return events.isEmpty() ? new ArrayList<EventFullDto>() : events.getContent().stream().map(EventMapper::toEventFullDto).collect(Collectors.toList());
     }
 
     private void setFields(Event resultEvent, Event eventUpdate) {

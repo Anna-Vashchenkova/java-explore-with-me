@@ -5,6 +5,7 @@ import ru.practicum.ewm_main_service.event.model.Event;
 import ru.practicum.ewm_main_service.event.model.Status;
 
 import javax.persistence.criteria.Join;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class EventSpecification {
@@ -15,7 +16,6 @@ public class EventSpecification {
             } else {
                 Join<Object, Object> join = root.join("initiator");
                 return join.get("id").in(users);
-//                return criteriaBuilder.in(root.get("initiator.id").in(users));
             }
         };
     }
@@ -30,5 +30,34 @@ public class EventSpecification {
         };
     }
 
+    public static Specification<Event> categoryIdsIn(List<Long> categories) {
+        return (root, query, criteriaBuilder) -> {
+            if (categories == null) {
+                return null;
+            } else {
+                Join<Object, Object> join = root.join("category");
+                return join.get("id").in(categories);
+            }
+        };
+    }
 
+    public static Specification<Event> startAfter(LocalDateTime start) {
+        return (root, query, criteriaBuilder) -> {
+            if (start == null) {
+                return null;
+            } else {
+                return criteriaBuilder.greaterThanOrEqualTo(root.get("eventDate"), start);
+            }
+        };
+    }
+
+    public static Specification<Event> endBefore(LocalDateTime end) {
+        return (root, query, criteriaBuilder) -> {
+            if (end == null) {
+                return null;
+            } else {
+                return criteriaBuilder.lessThanOrEqualTo(root.get("eventDate"), end);
+            }
+        };
+    }
 }
