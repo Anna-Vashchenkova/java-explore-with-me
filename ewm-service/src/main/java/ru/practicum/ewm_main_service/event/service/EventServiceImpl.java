@@ -24,6 +24,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -202,5 +203,15 @@ public class EventServiceImpl implements EventService {
         repository.save(resultEvent);
         log.info("Обновление администратором события : {}", resultEvent.getTitle());
         return EventMapper.toEventFullDto(resultEvent);
+    }
+
+    @Override
+    public Optional<Event> findEventById(Long eventId) {
+        return repository.findById(eventId);
+    }
+
+    @Override
+    public void saveAfterRequest(Event event) {
+        repository.save(event);
     }
 }

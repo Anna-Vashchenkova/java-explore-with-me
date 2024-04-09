@@ -13,6 +13,7 @@ import ru.practicum.ewm_main_service.user.dto.UserMapper;
 import ru.practicum.ewm_main_service.user.repository.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -53,5 +54,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User get(Long userId) {
         return repository.findById(userId).get();
+    }
+
+    @Override
+    public Optional<User> findById(long userId) {
+        return repository.findById(userId);
     }
 }

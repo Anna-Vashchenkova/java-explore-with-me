@@ -4,6 +4,7 @@ import ru.practicum.ewm_main_service.user.User;
 import ru.practicum.ewm_main_service.user.dto.UserDto;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
 
@@ -14,4 +15,6 @@ public interface UserService {
     void deleteUserById(Long userId);
 
     User get(Long userId);
+
+    Optional<User> findById(long userId);
 }

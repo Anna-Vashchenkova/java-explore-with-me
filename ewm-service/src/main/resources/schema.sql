@@ -38,6 +38,18 @@ create table if not exists events
     foreign key (initiator_id) references users (id) on delete cascade
     );
 
+drop table if exists requests cascade;
+create table if not exists requests
+(
+    id bigint generated always as identity primary key,
+    event_id bigint not null,
+    requester_id bigint not null,
+    created timestamp without time zone not null,
+    status varchar(9),
+    foreign key (event_id) references events (id) on delete cascade,
+    foreign key (requester_id) references users (id) on delete cascade
+    );
+
 drop table if exists compilations cascade;
 create table if not exists compilations
 (
