@@ -3,32 +3,13 @@ package ru.practicum.ewm_main_service.event.dto;
 import lombok.experimental.UtilityClass;
 import ru.practicum.ewm_main_service.category.dto.CategoryMapper;
 import ru.practicum.ewm_main_service.event.model.Event;
-import ru.practicum.ewm_main_service.event.model.Location;
-import ru.practicum.ewm_main_service.event.model.Status;
 import ru.practicum.ewm_main_service.user.dto.UserMapper;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @UtilityClass
 public final class EventMapper {
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-    public static Event toEntity(NewEventDto dto) {
-        return Event.builder()
-                .title(dto.getTitle())
-                .annotation(dto.getAnnotation())
-                .description(dto.getDescription())
-                .state(Status.PENDING)
-                .location(new Location(dto.getLocation().getLat(), dto.getLocation().getLon()))
-                .eventDate(LocalDateTime.parse(dto.getEventDate(), formatter))
-                .createdOn(LocalDateTime.now())
-                .publishedOn(null)
-                .paid(dto.isPaid())
-                .participantLimit(dto.getParticipantLimit())
-                .requestModeration(dto.isRequestModeration())
-                .build();
-    }
 
     public static EventFullDto toEventFullDto(Event entity) {
         return EventFullDto.builder()
@@ -48,34 +29,6 @@ public final class EventMapper {
                 .state(entity.getState().name())
                 .title(entity.getTitle())
                 .views(entity.getViews())
-                .build();
-    }
-
-    /*public static Event toEntity(UpdateEventAdminRequest dto) {
-        return Event.builder()
-                .annotation(dto.getAnnotation())
-                .createdOn(LocalDateTime.now())
-                .description(dto.getDescription())
-                .date(dto.getEventDate())
-                .location(dto.getLocation() != null ? new Location(dto.getLocation().getLat(),
-                        dto.getLocation().getLon()) : null)
-                .paid(dto.getPaid())
-                .participantLimit(dto.getParticipantLimit())
-                .requestModeration(dto.getRequestModeration())
-                .title(dto.getTitle())
-                .build();
-    }*/
-
-    public static Event toUpdateEvent(UpdateEventUserRequest dto) {
-        return Event.builder()
-                .title(dto.getTitle())
-                .annotation(dto.getAnnotation())
-                .description(dto.getDescription())
-                .eventDate(dto.getEventDate() != null ? LocalDateTime.parse(dto.getEventDate(), formatter) : null)
-                .paid(dto.getPaid() != null ? dto.getPaid() : false)
-                .location(dto.getLocation() != null ? new Location(dto.getLocation().getLat(),
-                        dto.getLocation().getLon()) : null)
-                .participantLimit(dto.getParticipantLimit())
                 .build();
     }
 

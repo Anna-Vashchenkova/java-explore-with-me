@@ -11,7 +11,7 @@ import javax.validation.constraints.PositiveOrZero;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UpdateEventUserRequest {
+public class UpdateEventAdminRequest {
     @Length(min = 3, max = 120)
     private String title;
     @Length(min = 20, max = 2000)
@@ -26,9 +26,9 @@ public class UpdateEventUserRequest {
     @PositiveOrZero
     private long participantLimit;
     private Boolean requestModeration;
-    private StateAction stateAction;
+    private UpdateEventAdminRequest.StateAction stateAction;
 
     public enum StateAction {
-        SEND_TO_REVIEW, CANCEL_REVIEW
+        PUBLISH_EVENT, REJECT_EVENT
     }
 }

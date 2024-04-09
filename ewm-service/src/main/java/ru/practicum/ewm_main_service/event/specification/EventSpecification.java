@@ -25,7 +25,7 @@ public class EventSpecification {
             if (statusEnum == null) {
                 return null;
             } else {
-                return criteriaBuilder.in(root.get("state").in(statusEnum));
+                return criteriaBuilder.isTrue(root.get("state").in(statusEnum));
             }
         };
     }

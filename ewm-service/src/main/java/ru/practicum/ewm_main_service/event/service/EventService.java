@@ -1,9 +1,6 @@
 package ru.practicum.ewm_main_service.event.service;
 
-import ru.practicum.ewm_main_service.event.dto.EventFullDto;
-import ru.practicum.ewm_main_service.event.dto.EventShortDto;
-import ru.practicum.ewm_main_service.event.dto.NewEventDto;
-import ru.practicum.ewm_main_service.event.dto.UpdateEventUserRequest;
+import ru.practicum.ewm_main_service.event.dto.*;
 
 import java.util.List;
 
@@ -17,4 +14,6 @@ public interface EventService {
     EventFullDto updateEvent(long userId, long eventId, UpdateEventUserRequest dto);
 
     List<EventFullDto> searchEvent(List<Long> users, List<String> states, List<Long> categories, String rangeStart, String rangeEnd, int from, int size);
+
+    EventFullDto updateEventByAdmin(long eventId, UpdateEventAdminRequest dto);
 }

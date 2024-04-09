@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm_main_service.event.dto.EventFullDto;
-import ru.practicum.ewm_main_service.event.dto.EventShortDto;
-import ru.practicum.ewm_main_service.event.dto.NewEventDto;
-import ru.practicum.ewm_main_service.event.dto.UpdateEventUserRequest;
+import ru.practicum.ewm_main_service.event.dto.*;
 import ru.practicum.ewm_main_service.event.service.EventService;
 import ru.practicum.ewm_main_service.exception.ValidationException;
 
@@ -64,5 +61,12 @@ public class EventController {
                                           @RequestParam(name = "size", defaultValue = "10") int size) {
         log.info("Получен запрос на поиск событий по фильтрам ");
         return eventService.searchEvent(users, states, categories, rangeStart, rangeEnd, from / size, size);
+    }
+
+    @PatchMapping("/admin/events/{eventId}")
+    public EventFullDto updateEventByAdmin(@PathVariable(name = "eventId") long eventId,
+                                           @RequestBody UpdateEventAdminRequest dto) {
+        log.info("Получен запрос на обновление администратором информации о событии с ID {}", eventId);
+        return eventService.updateEventByAdmin(eventId, dto);
     }
 }
