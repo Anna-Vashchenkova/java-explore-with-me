@@ -65,4 +65,14 @@ public class RequestServiceImpl implements RequestService {
         return result.isEmpty() ? new ArrayList<>() : result.stream().map(RequestMapper::toDto)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public ParticipationRequestDto requestCancellationByRequester(Long userId, Long requestId) {
+        if (userService.findById(userId).isEmpty()) {
+            throw new DataNotFoundException(String.format("Пользователь с ID = %s не найден", userId));
+        }
+        Request request = repository.findByRequesterIdAndId(userId, requestId);
+        request.setStatus(RequestStatus.CANCELED);
+        return RequestMapper.toDto(request);
+    }
 }
