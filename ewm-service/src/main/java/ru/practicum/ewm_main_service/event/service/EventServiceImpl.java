@@ -17,6 +17,7 @@ import ru.practicum.ewm_main_service.event.repository.EventRepository;
 import ru.practicum.ewm_main_service.event.specification.EventSpecification;
 import ru.practicum.ewm_main_service.exception.DataAlreadyExists;
 import ru.practicum.ewm_main_service.exception.DataNotFoundException;
+import ru.practicum.ewm_main_service.request.dto.ParticipationRequestDto;
 import ru.practicum.ewm_main_service.user.service.UserService;
 
 import java.time.LocalDateTime;

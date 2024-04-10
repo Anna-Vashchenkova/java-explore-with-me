@@ -2,6 +2,7 @@ package ru.practicum.ewm_main_service.event.service;
 
 import ru.practicum.ewm_main_service.event.dto.*;
 import ru.practicum.ewm_main_service.event.model.Event;
+import ru.practicum.ewm_main_service.request.dto.ParticipationRequestDto;
 
 import java.util.List;
 import java.util.Optional;

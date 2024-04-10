@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm_main_service.event.dto.*;
 import ru.practicum.ewm_main_service.event.service.EventService;
 import ru.practicum.ewm_main_service.exception.ValidationException;
+import ru.practicum.ewm_main_service.request.dto.ParticipationRequestDto;
+import ru.practicum.ewm_main_service.request.service.RequestService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -16,6 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EventController {
     private final EventService eventService;
+    private final RequestService requestService;
 
     @PostMapping("/users/{userId}/events")
     @ResponseStatus(HttpStatus.CREATED)
@@ -49,6 +52,14 @@ public class EventController {
                                     @RequestBody UpdateEventUserRequest dto) {
         log.info("Получен запрос на обновление информации о событии с ID {}, добавленном пользователем с ID {}", eventId, userId);
         return eventService.updateEvent(userId, eventId, dto);
+    }
+
+    @GetMapping("/users/{userId}/events/{eventId}/requests")
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public List<ParticipationRequestDto> findRequestsForOwnEvent(@PathVariable(name = "userId", required = true) Long userId,
+                                                         @PathVariable(name = "eventId", required = true) Long eventId) {
+        log.info("Запрос на получение информации о чужих запросах на участие в собственном событии с ID {} от пользователя с ID {}", eventId, userId);
+        return requestService.findRequestsForOwnEvent(userId, eventId);
     }
 
     @GetMapping("/admin/events")
