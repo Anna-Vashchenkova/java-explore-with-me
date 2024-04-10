@@ -9,7 +9,7 @@ import java.time.format.DateTimeFormatter;
 
 @UtilityClass
 public final class EventMapper {
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static EventFullDto toEventFullDto(Event entity) {
         return EventFullDto.builder()

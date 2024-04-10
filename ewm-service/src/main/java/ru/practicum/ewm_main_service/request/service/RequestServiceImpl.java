@@ -16,6 +16,9 @@ import ru.practicum.ewm_main_service.user.User;
 import ru.practicum.ewm_main_service.user.service.UserService;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -51,5 +54,15 @@ public class RequestServiceImpl implements RequestService {
             request = repository.save(new Request(null, event, user, LocalDateTime.now(), RequestStatus.PENDING));
         }
         return RequestMapper.toDto(request);
+    }
+
+    @Override
+    public List<ParticipationRequestDto> getRequests(Long userId) {
+        if (userService.findById(userId).isEmpty()) {
+            throw new DataNotFoundException(String.format("Пользователь с ID = %s не найден", userId));
+        }
+        List<Request> result = repository.findAllByRequesterId(userId);
+        return result.isEmpty() ? new ArrayList<>() : result.stream().map(RequestMapper::toDto)
+                .collect(Collectors.toList());
     }
 }

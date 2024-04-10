@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm_main_service.request.dto.ParticipationRequestDto;
 import ru.practicum.ewm_main_service.request.service.RequestService;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -19,5 +21,11 @@ public class RequestController {
                                                  @RequestParam Long eventId) {
         log.info("Получен запрос от пользователя {} на участие в событии с ID {}", userId, eventId);
         return requestService.addNewRequest(userId, eventId);
+    }
+
+    @GetMapping("/users/{userId}/requests")
+    public List<ParticipationRequestDto> getRequests(@PathVariable Long userId) {
+        log.info("Получен запрос на получение информации о запросах, добавленных пользователем с ID {}", userId);
+        return requestService.getRequests(userId);
     }
 }

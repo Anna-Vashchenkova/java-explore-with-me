@@ -65,6 +65,9 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventShortDto> getEvents(long userId, int from, int size) {
+        if (userService.findById(userId).isEmpty()) {
+            throw new DataNotFoundException(String.format("Пользователь с ID = %s не найден", userId));
+        }
         Sort sortById = Sort.by(Sort.Direction.ASC, "id");
         Page<Event> allByUserId = repository.findAllByUserId(userId, PageRequest.of(from, size, sortById));
         return allByUserId.isEmpty() ? new ArrayList<>() : allByUserId.getContent().stream().map(EventMapper::toEventShortDto).collect(Collectors.toList());
