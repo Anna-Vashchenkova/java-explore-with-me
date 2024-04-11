@@ -33,7 +33,9 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto addNewUser(@RequestBody UserDto dto) {
         log.info("Получен запрос на добавление нового пользователя с именем {}", dto.getName());
-        return userService.addNewUser(dto);
+        UserDto userDto = userService.addNewUser(dto);
+        log.info("Создан пользователь с ID={}", userDto.getId());
+        return userDto;
     }
 
     @DeleteMapping("admin/users/{userId}")

@@ -7,7 +7,6 @@ import ru.practicum.ewm_main_service.event.model.Event;
 import ru.practicum.ewm_main_service.event.service.EventService;
 import ru.practicum.ewm_main_service.exception.DataAlreadyExists;
 import ru.practicum.ewm_main_service.exception.DataNotFoundException;
-import ru.practicum.ewm_main_service.exception.ValidationException;
 import ru.practicum.ewm_main_service.request.dto.ParticipationRequestDto;
 import ru.practicum.ewm_main_service.request.dto.RequestMapper;
 import ru.practicum.ewm_main_service.request.model.Request;
@@ -79,9 +78,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public List<ParticipationRequestDto> findRequestsForOwnEvent(Long userId, Long eventId) {
-        if (!repository.existsByRequesterIdAndEventId(userId, eventId)) {
-            throw new ValidationException(String.format("Запрос с requesterId=%d и eventId=%d не существует, ошибка валидации", userId, eventId));
-        }
+        eventService.getEventById(userId, eventId);
         List<Request> requests = repository.findAllByEventId(eventId);
         return requests.isEmpty() ? new ArrayList<>() : requests.stream().map(RequestMapper::toDto)
                 .collect(Collectors.toList());

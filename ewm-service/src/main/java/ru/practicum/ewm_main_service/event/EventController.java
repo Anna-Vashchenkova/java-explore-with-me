@@ -25,7 +25,9 @@ public class EventController {
     public EventFullDto addNewEvent(@PathVariable(name = "userId") long userId,
                                     @Valid @RequestBody NewEventDto dto) {
         log.info("Получен запрос на добавление нового события {} пользователем с ID {}", dto.getTitle(), userId);
-        return eventService.addNewEvent(userId, dto);
+        EventFullDto eventFullDto = eventService.addNewEvent(userId, dto);
+        log.info("Создано событие с ID={}", eventFullDto.getId());
+        return eventFullDto;
     }
 
     @GetMapping("users/{userId}/events")
@@ -55,7 +57,6 @@ public class EventController {
     }
 
     @GetMapping("/users/{userId}/events/{eventId}/requests")
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public List<ParticipationRequestDto> findRequestsForOwnEvent(@PathVariable(name = "userId", required = true) Long userId,
                                                          @PathVariable(name = "eventId", required = true) Long eventId) {
         log.info("Запрос на получение информации о чужих запросах на участие в собственном событии с ID {} от пользователя с ID {}", eventId, userId);
