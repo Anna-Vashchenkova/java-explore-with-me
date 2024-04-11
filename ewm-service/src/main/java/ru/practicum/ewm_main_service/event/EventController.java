@@ -57,8 +57,8 @@ public class EventController {
     }
 
     @GetMapping("/users/{userId}/events/{eventId}/requests")
-    public List<ParticipationRequestDto> findRequestsForOwnEvent(@PathVariable(name = "userId", required = true) Long userId,
-                                                         @PathVariable(name = "eventId", required = true) Long eventId) {
+    public List<ParticipationRequestDto> findRequestsForOwnEvent(@PathVariable(name = "userId") Long userId,
+                                                         @PathVariable(name = "eventId") Long eventId) {
         log.info("Запрос на получение информации о чужих запросах на участие в собственном событии с ID {} от пользователя с ID {}", eventId, userId);
         return requestService.findRequestsForOwnEvent(userId, eventId);
     }
