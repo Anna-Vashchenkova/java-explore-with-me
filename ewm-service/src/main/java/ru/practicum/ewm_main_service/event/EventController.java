@@ -2,12 +2,17 @@ package ru.practicum.ewm_main_service.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Request;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm_main_service.event.dto.*;
 import ru.practicum.ewm_main_service.event.service.EventService;
+import ru.practicum.ewm_main_service.exception.DataAlreadyExists;
 import ru.practicum.ewm_main_service.exception.ValidationException;
+import ru.practicum.ewm_main_service.request.dto.EventRequestStatusUpdateRequest;
+import ru.practicum.ewm_main_service.request.dto.EventRequestStatusUpdateResult;
 import ru.practicum.ewm_main_service.request.dto.ParticipationRequestDto;
+import ru.practicum.ewm_main_service.request.model.RequestStatus;
 import ru.practicum.ewm_main_service.request.service.RequestService;
 
 import javax.validation.Valid;
@@ -58,9 +63,20 @@ public class EventController {
 
     @GetMapping("/users/{userId}/events/{eventId}/requests")
     public List<ParticipationRequestDto> findRequestsForOwnEvent(@PathVariable(name = "userId") Long userId,
-                                                         @PathVariable(name = "eventId") Long eventId) {
+                                                                 @PathVariable(name = "eventId") Long eventId) {
         log.info("Запрос на получение информации о чужих запросах на участие в собственном событии с ID {} от пользователя с ID {}", eventId, userId);
         return requestService.findRequestsForOwnEvent(userId, eventId);
+    }
+
+    @PatchMapping("/users/{userId}/events/{eventId}/requests")
+    public EventRequestStatusUpdateResult updateRequests(@PathVariable(name = "userId") Long userId,
+                                                         @PathVariable(name = "eventId") Long eventId,
+                                                         @RequestBody EventRequestStatusUpdateRequest dto) {
+        log.info("Запрос на изменение статуса заявок на участие в событии с ID= {} текущего пользователя ID= {}", eventId, userId);
+        if (RequestStatus.valueOf(dto.getStatus()) == null) {
+            throw new DataAlreadyExists(String.format("Статус заявок %s не валидный", dto.getStatus()));
+        }
+        return requestService.updateRequests(userId, eventId, dto);
     }
 
     @GetMapping("/admin/events")

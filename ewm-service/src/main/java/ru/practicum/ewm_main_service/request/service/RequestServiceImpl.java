@@ -3,10 +3,14 @@ package ru.practicum.ewm_main_service.request.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.ewm_main_service.event.dto.EventFullDto;
+import ru.practicum.ewm_main_service.event.dto.EventMapper;
 import ru.practicum.ewm_main_service.event.model.Event;
 import ru.practicum.ewm_main_service.event.service.EventService;
 import ru.practicum.ewm_main_service.exception.DataAlreadyExists;
 import ru.practicum.ewm_main_service.exception.DataNotFoundException;
+import ru.practicum.ewm_main_service.request.dto.EventRequestStatusUpdateRequest;
+import ru.practicum.ewm_main_service.request.dto.EventRequestStatusUpdateResult;
 import ru.practicum.ewm_main_service.request.dto.ParticipationRequestDto;
 import ru.practicum.ewm_main_service.request.dto.RequestMapper;
 import ru.practicum.ewm_main_service.request.model.Request;
@@ -82,5 +86,57 @@ public class RequestServiceImpl implements RequestService {
         List<Request> requests = repository.findAllByEventId(eventId);
         return requests.isEmpty() ? new ArrayList<>() : requests.stream().map(RequestMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public EventRequestStatusUpdateResult updateRequests(Long userId, Long eventId, EventRequestStatusUpdateRequest dto) {
+        List<ParticipationRequestDto> confirmedRequests = List.of();
+        List<ParticipationRequestDto> rejectedRequests = List.of();
+        List<Long> requestIds = dto.getRequestIds();
+        List<Request> requests = repository.findAllByIdIn(requestIds);
+        String status = dto.getStatus();
+
+        if (status.equals(RequestStatus.REJECTED.toString())) {
+            if (status.equals(RequestStatus.REJECTED.toString())) {
+                boolean isConfirmedRequest = requests.stream()
+                        .anyMatch(r -> r.getStatus().equals(RequestStatus.CONFIRMED));
+                if (isConfirmedRequest) {
+                    throw new DataAlreadyExists("Невозможно отклонить подтвержденные запросы");
+                }
+                rejectedRequests = requests.stream()
+                        .peek(r -> r.setStatus(RequestStatus.REJECTED))
+                        .map(RequestMapper::toDto)
+                        .collect(Collectors.toList());
+                return new EventRequestStatusUpdateResult(confirmedRequests, rejectedRequests);
+            }
+        }
+
+        if (status.equals(RequestStatus.PENDING.name())) {
+            Event event = eventService.findEventById(eventId).orElseThrow(() -> new DataNotFoundException("Событие не найдено или недоступно"));
+            if ((!event.isRequestModeration()) || (event.getParticipantLimit() == 0)) {
+                for (Request request : requests) {
+                    request.setStatus(RequestStatus.CONFIRMED);
+                }
+                event.setConfirmedRequests(event.getConfirmedRequests() + requests.size());
+                return new EventRequestStatusUpdateResult(
+                        requests.stream().map(RequestMapper::toDto).collect(Collectors.toList()),
+                        rejectedRequests);
+            } else if (event.getConfirmedRequests() == event.getParticipantLimit()) {
+                throw new DataAlreadyExists("Нельзя подтвердить заявку, лимит по заявкам на данное событие уже достигнут");
+            } else if (event.getConfirmedRequests() <= event.getParticipantLimit()) {
+                do {
+                    for (Request request : requests) {
+                        request.setStatus(RequestStatus.CONFIRMED);
+                        event.setConfirmedRequests(event.getConfirmedRequests() + 1);
+                    }
+                } while (event.getConfirmedRequests() < event.getParticipantLimit());
+                return new EventRequestStatusUpdateResult(
+                        requests.stream().map(RequestMapper::toDto).collect(Collectors.toList()),
+                        rejectedRequests);
+            }
+        } else {
+            throw new DataAlreadyExists("Статус можно изменить только у заявок, находящихся в состоянии ожидания");
+        }
+        return new EventRequestStatusUpdateResult(confirmedRequests, rejectedRequests);
     }
 }
