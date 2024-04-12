@@ -96,4 +96,19 @@ public class EventController {
         log.info("Получен запрос на обновление администратором информации о событии с ID {}", eventId);
         return eventService.updateEventByAdmin(eventId, dto);
     }
+
+    @GetMapping("/events")
+    public List<EventShortDto> getEventsPublic(@RequestParam(name = "text") String text,
+                                               @RequestParam(name = "categories") List<Long> categories,
+                                               @RequestParam(name = "paid") Boolean paid,
+                                               @RequestParam(name = "rangeStart") String rangeStart,
+                                               @RequestParam(name = "rangeEnd") String rangeEnd,
+                                               @RequestParam(name = "onlyAvailable", defaultValue = "false") boolean onlyAvailable,
+                                               @RequestParam(name = "sort") String sort,
+                                               @RequestParam(name = "from", defaultValue = "0") int from,
+                                               @RequestParam(name = "size", defaultValue = "10") int size) {
+        log.info("Получен запрос на получение информации об опубликованных событиях по фильтрам");
+        return eventService.getEventsPublic(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
+    }
+
 }
