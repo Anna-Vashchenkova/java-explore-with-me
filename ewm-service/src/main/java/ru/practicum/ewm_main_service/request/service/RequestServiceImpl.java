@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm_main_service.event.dto.EventFullDto;
-import ru.practicum.ewm_main_service.event.dto.EventMapper;
 import ru.practicum.ewm_main_service.event.model.Event;
 import ru.practicum.ewm_main_service.event.service.EventService;
 import ru.practicum.ewm_main_service.exception.DataAlreadyExists;
@@ -90,53 +89,63 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public EventRequestStatusUpdateResult updateRequests(Long userId, Long eventId, EventRequestStatusUpdateRequest dto) {
-        List<ParticipationRequestDto> confirmedRequests = List.of();
-        List<ParticipationRequestDto> rejectedRequests = List.of();
-        List<Long> requestIds = dto.getRequestIds();
-        List<Request> requests = repository.findAllByIdIn(requestIds);
-        String status = dto.getStatus();
-
-        if (status.equals(RequestStatus.REJECTED.toString())) {
-            if (status.equals(RequestStatus.REJECTED.toString())) {
-                boolean isConfirmedRequest = requests.stream()
-                        .anyMatch(r -> r.getStatus().equals(RequestStatus.CONFIRMED));
-                if (isConfirmedRequest) {
-                    throw new DataAlreadyExists("Невозможно отклонить подтвержденные запросы");
-                }
-                rejectedRequests = requests.stream()
-                        .peek(r -> r.setStatus(RequestStatus.REJECTED))
-                        .map(RequestMapper::toDto)
-                        .collect(Collectors.toList());
-                return new EventRequestStatusUpdateResult(confirmedRequests, rejectedRequests);
-            }
-        }
-
-        if (status.equals(RequestStatus.PENDING.name())) {
-            Event event = eventService.findEventById(eventId).orElseThrow(() -> new DataNotFoundException("Событие не найдено или недоступно"));
-            if ((!event.isRequestModeration()) || (event.getParticipantLimit() == 0)) {
-                for (Request request : requests) {
-                    request.setStatus(RequestStatus.CONFIRMED);
-                }
-                event.setConfirmedRequests(event.getConfirmedRequests() + requests.size());
-                return new EventRequestStatusUpdateResult(
-                        requests.stream().map(RequestMapper::toDto).collect(Collectors.toList()),
-                        rejectedRequests);
-            } else if (event.getConfirmedRequests() == event.getParticipantLimit()) {
-                throw new DataAlreadyExists("Нельзя подтвердить заявку, лимит по заявкам на данное событие уже достигнут");
-            } else if (event.getConfirmedRequests() <= event.getParticipantLimit()) {
-                do {
-                    for (Request request : requests) {
-                        request.setStatus(RequestStatus.CONFIRMED);
-                        event.setConfirmedRequests(event.getConfirmedRequests() + 1);
-                    }
-                } while (event.getConfirmedRequests() < event.getParticipantLimit());
-                return new EventRequestStatusUpdateResult(
-                        requests.stream().map(RequestMapper::toDto).collect(Collectors.toList()),
-                        rejectedRequests);
-            }
+        EventFullDto event = eventService.getEventById(userId, eventId);
+        if(dto.getStatus().equals("REJECTED")) {
+            return rejectRequests(dto.getRequestIds());
         } else {
-            throw new DataAlreadyExists("Статус можно изменить только у заявок, находящихся в состоянии ожидания");
+            return confirmRequests(event, dto.getRequestIds());
         }
+    }
+
+    private EventRequestStatusUpdateResult confirmRequests(EventFullDto event, List<Long> requestIds) {
+        List<ParticipationRequestDto> confirmedRequests = new ArrayList<>();
+        List<ParticipationRequestDto> rejectedRequests = new ArrayList<>();
+        final long[] temp = new  long[]{event.getConfirmedRequests()};
+        final long[] limit = new  long[]{event.getParticipantLimit()};
+        requestIds.stream().map(id -> repository.findById(id).orElseGet(null))
+                .filter(it -> it != null)
+                .forEach(it -> {
+                    if (it.getStatus().equals(RequestStatus.PENDING)) {
+                        if (canConfirm(temp[0], limit[0])) {
+                            it.setStatus(RequestStatus.CONFIRMED);
+                            repository.save(it);
+                            temp[0]++;
+                        } else {
+                            it.setStatus(RequestStatus.REJECTED);
+                            repository.save(it);
+                        }
+                    }
+                    if (it.getStatus().equals(RequestStatus.CONFIRMED)) {
+                        confirmedRequests.add(RequestMapper.toDto(it));
+                    } else {
+                        rejectedRequests.add(RequestMapper.toDto(it));
+                    }
+                });
+        eventService.findEventById(event.getId()).get().setConfirmedRequests(temp[0]);
+        return new EventRequestStatusUpdateResult(confirmedRequests, rejectedRequests);
+    }
+
+    private boolean canConfirm(long temp, long limit) {
+        return (limit == 0L) || (temp < limit);
+    }
+
+    private EventRequestStatusUpdateResult rejectRequests(List<Long> requestIds) {
+        List<ParticipationRequestDto> confirmedRequests = new ArrayList<>();
+        List<ParticipationRequestDto> rejectedRequests = new ArrayList<>();
+        requestIds.stream()
+                .map(id -> repository.findById(id).orElseGet(null))
+                .filter(it -> it != null)
+                .forEach(it -> {
+                            if (it.getStatus().equals(RequestStatus.PENDING)) {
+                                it.setStatus(RequestStatus.REJECTED);
+                                repository.save(it);
+                            }
+                            if (it.getStatus().equals(RequestStatus.CONFIRMED)) {
+                                confirmedRequests.add(RequestMapper.toDto(it));
+                            } else {
+                                rejectedRequests.add(RequestMapper.toDto(it));
+                            }
+                        });
         return new EventRequestStatusUpdateResult(confirmedRequests, rejectedRequests);
     }
 }

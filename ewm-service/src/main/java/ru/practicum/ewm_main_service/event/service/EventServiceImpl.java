@@ -17,14 +17,12 @@ import ru.practicum.ewm_main_service.event.repository.EventRepository;
 import ru.practicum.ewm_main_service.event.specification.EventSpecification;
 import ru.practicum.ewm_main_service.exception.DataAlreadyExists;
 import ru.practicum.ewm_main_service.exception.DataNotFoundException;
-import ru.practicum.ewm_main_service.request.dto.ParticipationRequestDto;
 import ru.practicum.ewm_main_service.user.service.UserService;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -144,7 +142,7 @@ public class EventServiceImpl implements EventService {
 
         List<Status> statusEnum = null;
         if (states != null) {
-            statusEnum = states.stream().map(Status::valueOf).filter(Objects::nonNull).collect(Collectors.toList());
+            statusEnum = states.stream().map(Status::valueOf).filter(obj -> true).collect(Collectors.toList());
         }
         LocalDateTime start = LocalDateTime.parse(rangeStart, formatter);
         LocalDateTime end = LocalDateTime.parse(rangeEnd, formatter);
@@ -155,7 +153,7 @@ public class EventServiceImpl implements EventService {
                         .and(EventSpecification.startAfter(start))
                         .and(EventSpecification.endBefore(end)),
                 PageRequest.of(from, size, sortById));
-        return events.isEmpty() ? new ArrayList<EventFullDto>() : events.getContent().stream().map(EventMapper::toEventFullDto).collect(Collectors.toList());
+        return events.isEmpty() ? new ArrayList<>() : events.getContent().stream().map(EventMapper::toEventFullDto).collect(Collectors.toList());
     }
 
     @Override
