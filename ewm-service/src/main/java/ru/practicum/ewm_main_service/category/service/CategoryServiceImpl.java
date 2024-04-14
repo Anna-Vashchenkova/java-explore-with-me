@@ -22,6 +22,7 @@ import java.util.Optional;
 @Slf4j
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository repository;
+
     @Override
     public CategoryDto addNewCategory(NewCategoryDto dto) {
         if (dto.getName() == null) {
@@ -43,7 +44,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto getCategoryById(long catId) {
-        Category category = repository.findById(catId).orElseThrow(() -> new DataNotFoundException("Категория с таким id не найдена."));
+        Category category = repository.findById(catId).orElseThrow(() -> new DataNotFoundException(String.format("Категория с id %s не найдена.", catId)));
         return CategoryMapper.toCategoryDto(category);
     }
 
@@ -81,8 +82,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void deleteCategoryById(Long catId) {
-
+        repository.findById(catId).orElseThrow(() -> new DataNotFoundException(String.format("Категория %s не найдена или недоступна", catId)));
+        repository.deleteById(catId);
     }
-
-
 }

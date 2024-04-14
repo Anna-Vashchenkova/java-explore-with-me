@@ -262,4 +262,11 @@ public class EventServiceImpl implements EventService {
         log.info("Найдено событие {}", result.getTitle());
         return EventMapper.toEventFullDto(result);
     }
+
+    @Override
+    public List<Event> findEventByCategoryId(Long catId) {
+        return repository.findByCategoryId(catId);
+    }
+
+
 }

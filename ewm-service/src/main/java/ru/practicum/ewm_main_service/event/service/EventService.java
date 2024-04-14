@@ -40,4 +40,6 @@ public interface EventService {
                                         int size);
 
     EventFullDto getEventByIdPublic(long eventId);
+
+    List<Event> findEventByCategoryId(Long catId);
 }
