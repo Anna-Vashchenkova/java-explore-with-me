@@ -60,4 +60,44 @@ public class EventSpecification {
             }
         };
     }
+
+    public static Specification<Event> containsText(String text) {
+        return (root, query, criteriaBuilder) -> {
+            if (text == null) {
+                return null;
+            } else {
+                String criteria = "%" + text.toUpperCase() + "%";
+                return criteriaBuilder.or(
+                        criteriaBuilder.like(criteriaBuilder.upper(root.get("annotation")), criteria),
+                        criteriaBuilder.like(criteriaBuilder.upper(root.get("description")), criteria)
+                );
+            }
+        };
+    }
+
+    public static Specification<Event> isPaid(Boolean paid) {
+        return (root, query, criteriaBuilder) -> {
+            if (paid == null) {
+                return null;
+            } else if (paid){
+                return criteriaBuilder.isTrue(root.get("paid"));
+            } else {
+                return criteriaBuilder.isFalse(root.get("paid"));
+            }
+        };
+    }
+
+    public static Specification<Event> onlyAvailable(Boolean onlyAvailable) {
+        return (root, query, criteriaBuilder) -> {
+            if ((onlyAvailable == null) || (!onlyAvailable)) {
+                return null;
+            } else {
+                return criteriaBuilder.ge(root.get("participantLimit"), root.get("confirmedRequests"));
+            }
+        };
+    }
+
+    public static Specification<Event> isPublished() {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("state"), Status.PUBLISHED);
+    }
 }

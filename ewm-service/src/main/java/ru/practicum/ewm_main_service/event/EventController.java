@@ -103,7 +103,7 @@ public class EventController {
                                                @RequestParam(name = "paid") Boolean paid,
                                                @RequestParam(name = "rangeStart") String rangeStart,
                                                @RequestParam(name = "rangeEnd") String rangeEnd,
-                                               @RequestParam(name = "onlyAvailable", defaultValue = "false") boolean onlyAvailable,
+                                               @RequestParam(name = "onlyAvailable", defaultValue = "false") Boolean onlyAvailable,
                                                @RequestParam(name = "sort") String sort,
                                                @RequestParam(name = "from", defaultValue = "0") int from,
                                                @RequestParam(name = "size", defaultValue = "10") int size) {
@@ -111,4 +111,9 @@ public class EventController {
         return eventService.getEventsPublic(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
     }
 
+    @GetMapping("/events/{id}")
+    public EventFullDto getEventByIdPublic(@PathVariable(name = "id") long eventId) {
+        log.info("Получен запрос на получение подробной информации об опубликованном событии по его идентификатору {}", eventId);
+        return eventService.getEventByIdPublic(eventId);
+    }
 }

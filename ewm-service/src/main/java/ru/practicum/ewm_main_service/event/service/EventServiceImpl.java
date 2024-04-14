@@ -39,7 +39,7 @@ public class EventServiceImpl implements EventService {
     public EventFullDto addNewEvent(long userId, NewEventDto dto) {
         Category category = categoryService.get(dto.getCategory());
         LocalDateTime eventDate = LocalDateTime.parse(dto.getEventDate(), formatter);
-        if (eventDate != null && eventDate.isBefore(LocalDateTime.now().plusHours(2))) {
+        if (eventDate.isBefore(LocalDateTime.now().plusHours(2))) {
             throw new DataAlreadyExists(String.format("Поле eventDate %s должно содержать дату, которая еще не наступила.", eventDate));
         }
         Event event = repository.save(new Event(null,
@@ -87,7 +87,7 @@ public class EventServiceImpl implements EventService {
         LocalDateTime eventDate;
         if (dto.getEventDate() != null) {
             eventDate = LocalDateTime.parse(dto.getEventDate(), formatter);
-            if (eventDate != null && eventDate.isBefore(LocalDateTime.now().plusHours(2))) {
+            if (eventDate.isBefore(LocalDateTime.now().plusHours(2))) {
                 throw new DataAlreadyExists(String.format("Поле eventDate %s должно содержать дату, которая еще не наступила.", eventDate));
             }
         }
@@ -142,7 +142,7 @@ public class EventServiceImpl implements EventService {
 
         List<Status> statusEnum = null;
         if (states != null) {
-            statusEnum = states.stream().map(Status::valueOf).filter(obj -> true).collect(Collectors.toList());
+            statusEnum = states.stream().map(Status::valueOf).collect(Collectors.toList());
         }
         LocalDateTime start = LocalDateTime.parse(rangeStart, formatter);
         LocalDateTime end = LocalDateTime.parse(rangeEnd, formatter);
@@ -164,7 +164,7 @@ public class EventServiceImpl implements EventService {
         LocalDateTime eventDate;
         if (dto.getEventDate() != null) {
             eventDate = LocalDateTime.parse(dto.getEventDate(), formatter);
-            if (eventDate != null && eventDate.isBefore(LocalDateTime.now().plusHours(1))) {
+            if (eventDate.isBefore(LocalDateTime.now().plusHours(1))) {
                 throw new DataAlreadyExists(String.format("Поле eventDate %s должно содержать дату, которая еще не наступила.", eventDate));
             }
         }
@@ -215,5 +215,51 @@ public class EventServiceImpl implements EventService {
     @Override
     public void saveAfterRequest(Event event) {
         repository.save(event);
+    }
+
+    @Override
+    public List<EventShortDto> getEventsPublic(String text,
+                                               List<Long> categories,
+                                               Boolean paid,
+                                               String rangeStart,
+                                               String rangeEnd,
+                                               Boolean onlyAvailable,
+                                               String sort,
+                                               int from,
+                                               int size) {
+        LocalDateTime start = LocalDateTime.parse(rangeStart, formatter);
+        LocalDateTime end = LocalDateTime.parse(rangeEnd, formatter);
+        if (categories.get(0) < 1) {
+            categories = null;
+        }
+        Sort sort1 = null;
+        PageRequest pageable = PageRequest.of(from, size);
+        if (sort != null && !sort.isEmpty()) {
+            if (sort.equals("EVENT_DATE")) {
+                sort1 = Sort.by(Sort.Direction.ASC, "eventDate");
+            } else if (sort.equals("VIEWS")) {
+                sort1 = Sort.by(Sort.Direction.ASC, "views");
+            }
+        }
+        if (sort1 != null) {
+            pageable = PageRequest.of(from, size, sort1);
+        }
+        Page<Event> events = repository.findAll(
+                Specification.where(EventSpecification.isPublished())
+                        .and(EventSpecification.containsText(text))
+                        .and(EventSpecification.categoryIdsIn(categories))
+                        .and(EventSpecification.isPaid(paid))
+                        .and(EventSpecification.startAfter(start))
+                        .and(EventSpecification.endBefore(end))
+                        .and(EventSpecification.onlyAvailable(onlyAvailable)),
+                pageable);
+        return events.isEmpty() ? new ArrayList<>() : events.getContent().stream().map(EventMapper::toEventShortDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public EventFullDto getEventByIdPublic(long eventId) {
+        Event result = repository.findById(eventId).orElseThrow(() -> new DataNotFoundException("Событие не найдено или недоступно"));
+        log.info("Найдено событие {}", result.getTitle());
+        return EventMapper.toEventFullDto(result);
     }
 }

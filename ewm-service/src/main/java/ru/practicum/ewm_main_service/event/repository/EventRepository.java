@@ -6,10 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import ru.practicum.ewm_main_service.event.model.Event;
-import ru.practicum.ewm_main_service.request.dto.ParticipationRequestDto;
-import ru.practicum.ewm_main_service.request.model.Request;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecificationExecutor<Event> {
