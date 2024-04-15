@@ -53,7 +53,15 @@ create table if not exists requests
 drop table if exists compilations cascade;
 create table if not exists compilations
 (
-    id BIGINT generated always as identity primary key,
+    id bigint generated always as identity primary key,
     pinned bool not null,
-    title varchar(100) not null
+    title varchar(50) not null,
+    CONSTRAINT UQ_TITLE_COMPILATION UNIQUE (title)
+    );
+
+drop table if exists event_compilations cascade;
+create table if not exists event_compilations
+(
+    compilation_id bigint not null references compilations (id) on delete cascade,
+    event_id       bigint not null references events (id) on delete cascade
     );
