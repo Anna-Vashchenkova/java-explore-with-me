@@ -120,10 +120,12 @@ public class EventServiceImpl implements EventService {
         if (resultEvent.getState().equals(Status.PUBLISHED)) {
             throw new DataAlreadyExists("Событие не должно быть опубликовано");
         }
-        if (dto.getStateAction().toString().equals(UpdateEventUserRequest.StateAction.CANCEL_REVIEW.toString())) {
-            resultEvent.setState(Status.CANCELED);
-        } else if (UpdateEventUserRequest.StateAction.SEND_TO_REVIEW.toString().equals(dto.getStateAction().toString())) {
-            resultEvent.setState(Status.PENDING);
+        if (dto.getStateAction() != null) {
+            if (dto.getStateAction().toString().equals(UpdateEventUserRequest.StateAction.CANCEL_REVIEW.toString())) {
+                resultEvent.setState(Status.CANCELED);
+            } else if (UpdateEventUserRequest.StateAction.SEND_TO_REVIEW.toString().equals(dto.getStateAction().toString())) {
+                resultEvent.setState(Status.PENDING);
+            }
         }
         repository.save(resultEvent);
         log.info("Обновление пользователем события : {}", resultEvent.getTitle());
@@ -227,8 +229,12 @@ public class EventServiceImpl implements EventService {
                                                String sort,
                                                int from,
                                                int size) {
-        LocalDateTime start = LocalDateTime.parse(rangeStart, formatter);
-        LocalDateTime end = LocalDateTime.parse(rangeEnd, formatter);
+        LocalDateTime start = null;
+        LocalDateTime end = null;
+        if ((rangeStart != null) && (rangeEnd != null)) {
+            start = LocalDateTime.parse(rangeStart, formatter);
+            end = LocalDateTime.parse(rangeEnd, formatter);
+        }
         if (categories.get(0) < 1) {
             categories = null;
         }
@@ -258,7 +264,10 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventFullDto getEventByIdPublic(long eventId) {
-        Event result = repository.findById(eventId).orElseThrow(() -> new DataNotFoundException("Событие не найдено или недоступно"));
+        Event result = repository.findById(eventId).orElseThrow(() -> new DataNotFoundException(String.format("Событие с ID %s не найдено или недоступно", eventId)));
+        if (!result.getState().equals(Status.PUBLISHED)) {
+            throw new DataNotFoundException(String.format("Событие с ID %s не найдено или недоступно", eventId));
+        }
         log.info("Найдено событие {}", result.getTitle());
         return EventMapper.toEventFullDto(result);
     }

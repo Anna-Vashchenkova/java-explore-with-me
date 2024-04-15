@@ -13,6 +13,7 @@ import ru.practicum.ewm_main_service.request.dto.EventRequestStatusUpdateResult;
 import ru.practicum.ewm_main_service.request.dto.ParticipationRequestDto;
 import ru.practicum.ewm_main_service.request.model.RequestStatus;
 import ru.practicum.ewm_main_service.request.service.RequestService;
+import ru.practicum.statistics_client.StatisticsClient;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -23,6 +24,7 @@ import java.util.List;
 public class EventController {
     private final EventService eventService;
     private final RequestService requestService;
+    //private final StatisticsClient client;
 
     @PostMapping("/users/{userId}/events")
     @ResponseStatus(HttpStatus.CREATED)
@@ -55,7 +57,7 @@ public class EventController {
     @PatchMapping("users/{userId}/events/{eventId}")
     public EventFullDto updateEvent(@PathVariable(name = "userId") long userId,
                                     @PathVariable(name = "eventId") long eventId,
-                                    @RequestBody UpdateEventUserRequest dto) {
+                                    @Valid @RequestBody UpdateEventUserRequest dto) {
         log.info("Получен запрос на обновление информации о событии с ID {}, добавленном пользователем с ID {}", eventId, userId);
         return eventService.updateEvent(userId, eventId, dto);
     }
@@ -98,13 +100,13 @@ public class EventController {
     }
 
     @GetMapping("/events")
-    public List<EventShortDto> getEventsPublic(@RequestParam(name = "text") String text,
-                                               @RequestParam(name = "categories") List<Long> categories,
-                                               @RequestParam(name = "paid") Boolean paid,
-                                               @RequestParam(name = "rangeStart") String rangeStart,
-                                               @RequestParam(name = "rangeEnd") String rangeEnd,
+    public List<EventShortDto> getEventsPublic(@RequestParam(name = "text", required = false) String text,
+                                               @RequestParam(name = "categories", required = false) List<Long> categories,
+                                               @RequestParam(name = "paid", required = false) Boolean paid,
+                                               @RequestParam(name = "rangeStart", required = false) String rangeStart,
+                                               @RequestParam(name = "rangeEnd", required = false) String rangeEnd,
                                                @RequestParam(name = "onlyAvailable", defaultValue = "false") Boolean onlyAvailable,
-                                               @RequestParam(name = "sort") String sort,
+                                               @RequestParam(name = "sort", required = false) String sort,
                                                @RequestParam(name = "from", defaultValue = "0") int from,
                                                @RequestParam(name = "size", defaultValue = "10") int size) {
         log.info("Получен запрос на получение информации об опубликованных событиях по фильтрам");
