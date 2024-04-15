@@ -121,7 +121,7 @@ public class RequestServiceImpl implements RequestService {
                         rejectedRequests.add(RequestMapper.toDto(it));
                     }
                 });
-        eventService.findEventById(event.getId()).get().setConfirmedRequests(temp[0]);
+        eventService.updateConfirmationCount(event.getId(), temp[0]);
         return new EventRequestStatusUpdateResult(confirmedRequests, rejectedRequests);
     }
 

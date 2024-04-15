@@ -40,7 +40,7 @@ public class StatisticsClient {
                         .queryParam("start", start.format(formatter))
                         .queryParam("end", end.format(formatter))
                         .queryParam("uris", uris)
-                        .queryParam("unique", uris)
+                        .queryParam("unique", unique)
                         .build())
                 .retrieve()
                 .onStatus(HttpStatus::isError,

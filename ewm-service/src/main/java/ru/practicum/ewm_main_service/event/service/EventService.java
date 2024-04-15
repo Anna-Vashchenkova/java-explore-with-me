@@ -42,4 +42,6 @@ public interface EventService {
     EventFullDto getEventByIdPublic(long eventId);
 
     List<Event> findEventByCategoryId(Long catId);
+
+    void updateConfirmationCount(Long id, long count);
 }

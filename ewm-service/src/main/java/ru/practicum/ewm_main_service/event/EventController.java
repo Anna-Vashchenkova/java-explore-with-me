@@ -15,7 +15,9 @@ import ru.practicum.ewm_main_service.request.model.RequestStatus;
 import ru.practicum.ewm_main_service.request.service.RequestService;
 import ru.practicum.statistics_client.StatisticsClient;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -24,7 +26,7 @@ import java.util.List;
 public class EventController {
     private final EventService eventService;
     private final RequestService requestService;
-    //private final StatisticsClient client;
+    private final StatisticsClient client;
 
     @PostMapping("/users/{userId}/events")
     @ResponseStatus(HttpStatus.CREATED)
@@ -108,14 +110,23 @@ public class EventController {
                                                @RequestParam(name = "onlyAvailable", defaultValue = "false") Boolean onlyAvailable,
                                                @RequestParam(name = "sort", required = false) String sort,
                                                @RequestParam(name = "from", defaultValue = "0") int from,
-                                               @RequestParam(name = "size", defaultValue = "10") int size) {
+                                               @RequestParam(name = "size", defaultValue = "10") int size,
+                                               HttpServletRequest request) {
         log.info("Получен запрос на получение информации об опубликованных событиях по фильтрам");
-        return eventService.getEventsPublic(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
+        List<EventShortDto> eventsPublic = eventService.getEventsPublic(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
+
+        client.saveHit("ewm-service", request.getRemoteHost(), request.getRequestURI(),
+                LocalDateTime.now());
+        return eventsPublic;
     }
 
     @GetMapping("/events/{id}")
-    public EventFullDto getEventByIdPublic(@PathVariable(name = "id") long eventId) {
+    public EventFullDto getEventByIdPublic(@PathVariable(name = "id") long eventId,
+                                           HttpServletRequest request) {
         log.info("Получен запрос на получение подробной информации об опубликованном событии по его идентификатору {}", eventId);
-        return eventService.getEventByIdPublic(eventId);
+        EventFullDto fullDto = eventService.getEventByIdPublic(eventId);
+        client.saveHit("ewm-service", request.getRemoteHost(), request.getRequestURI(),
+                LocalDateTime.now());
+        return fullDto;
     }
 }

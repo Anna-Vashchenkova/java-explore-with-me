@@ -34,6 +34,7 @@ public class EventServiceImpl implements EventService {
     private final CategoryService categoryService;
     private final UserService userService;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private final EventMapper eventMapper;
 
     @Override
     public EventFullDto addNewEvent(long userId, NewEventDto dto) {
@@ -59,7 +60,7 @@ public class EventServiceImpl implements EventService {
                 0,
                 0
                 ));
-        return EventMapper.toEventFullDto(event);
+        return eventMapper.toEventFullDto(event);
     }
 
     @Override
@@ -76,7 +77,7 @@ public class EventServiceImpl implements EventService {
     public EventFullDto getEventById(long userId, long eventId) {
         Event event = repository.findByInitiatorIdAndId(userId, eventId)
                 .orElseThrow(() -> new DataNotFoundException(String.format("Событие с ID %s, созданное пользователем с ID %s, не найдено", eventId, userId)));
-        return EventMapper.toEventFullDto(event);
+        return eventMapper.toEventFullDto(event);
     }
 
     @Override
@@ -129,7 +130,7 @@ public class EventServiceImpl implements EventService {
         }
         repository.save(resultEvent);
         log.info("Обновление пользователем события : {}", resultEvent.getTitle());
-        return EventMapper.toEventFullDto(resultEvent);
+        return eventMapper.toEventFullDto(resultEvent);
     }
 
     @Override
@@ -146,8 +147,8 @@ public class EventServiceImpl implements EventService {
         if (states != null) {
             statusEnum = states.stream().map(Status::valueOf).collect(Collectors.toList());
         }
-        LocalDateTime start = LocalDateTime.parse(rangeStart, formatter);
-        LocalDateTime end = LocalDateTime.parse(rangeEnd, formatter);
+        LocalDateTime start = rangeStart !=null? LocalDateTime.parse(rangeStart, formatter):null;
+        LocalDateTime end = rangeEnd!= null?LocalDateTime.parse(rangeEnd, formatter):null;
         Page<Event> events = repository.findAll(
                 Specification.where(EventSpecification.userIdsIn(users))
                         .and(EventSpecification.statusIn(statusEnum))
@@ -155,7 +156,7 @@ public class EventServiceImpl implements EventService {
                         .and(EventSpecification.startAfter(start))
                         .and(EventSpecification.endBefore(end)),
                 PageRequest.of(from, size, sortById));
-        return events.isEmpty() ? new ArrayList<>() : events.getContent().stream().map(EventMapper::toEventFullDto).collect(Collectors.toList());
+        return events.isEmpty() ? new ArrayList<>() : events.getContent().stream().map(eventMapper::toEventFullDto).collect(Collectors.toList());
     }
 
     @Override
@@ -206,7 +207,7 @@ public class EventServiceImpl implements EventService {
         }
         repository.save(resultEvent);
         log.info("Обновление администратором события : {}", resultEvent.getTitle());
-        return EventMapper.toEventFullDto(resultEvent);
+        return eventMapper.toEventFullDto(resultEvent);
     }
 
     @Override
@@ -268,8 +269,9 @@ public class EventServiceImpl implements EventService {
         if (!result.getState().equals(Status.PUBLISHED)) {
             throw new DataNotFoundException(String.format("Событие с ID %s не найдено или недоступно", eventId));
         }
+        EventFullDto eventFullDto = eventMapper.toEventFullDto(result);
         log.info("Найдено событие {}", result.getTitle());
-        return EventMapper.toEventFullDto(result);
+        return eventFullDto;
     }
 
     @Override
@@ -277,5 +279,10 @@ public class EventServiceImpl implements EventService {
         return repository.findByCategoryId(catId);
     }
 
-
+    @Override
+    public void updateConfirmationCount(Long id, long count) {
+        Event event = repository.findById(id).get();
+        event.setConfirmedRequests(count);
+        repository.save(event);
+    }
 }

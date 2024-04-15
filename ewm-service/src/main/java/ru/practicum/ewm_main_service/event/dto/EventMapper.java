@@ -1,17 +1,33 @@
 package ru.practicum.ewm_main_service.event.dto;
 
-import lombok.experimental.UtilityClass;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
 import ru.practicum.ewm_main_service.category.dto.CategoryMapper;
 import ru.practicum.ewm_main_service.event.model.Event;
 import ru.practicum.ewm_main_service.user.dto.UserMapper;
+import ru.practicum.statistics_client.StatisticsClient;
+import ru.practicum.statistics_dto.HitOutcomeDto;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
-@UtilityClass
-public final class EventMapper {
+@Service
+@AllArgsConstructor
+public class EventMapper {
+    private final StatisticsClient client;
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    public static EventFullDto toEventFullDto(Event entity) {
+    public EventFullDto toEventFullDto(Event entity) {
+        Optional<HitOutcomeDto> hitOutcomeDto = Objects.requireNonNull(client.getStat(entity.getCreatedOn(), LocalDateTime.now(), List.of("/events/" + entity.getId()), true)
+                .block()).stream().findFirst();
+        long count = 0;
+        if (hitOutcomeDto.isPresent()) {
+
+            count = hitOutcomeDto.get().getHits();
+        }
         return EventFullDto.builder()
                 .id(entity.getId())
                 .annotation(entity.getAnnotation())
@@ -28,7 +44,7 @@ public final class EventMapper {
                 .requestModeration(entity.isRequestModeration())
                 .state(entity.getState().name())
                 .title(entity.getTitle())
-                .views(entity.getViews())
+                .views(count)
                 .build();
     }
 
