@@ -11,5 +11,9 @@ public interface CompilationService {
 
     CompilationDto updateCompilation(Long compId, UpdateCompilationRequest updateCompilationRequest);
 
+    void deleteCompilation(Long compId);
+
     List<CompilationDto> getCompilationsPublic(Boolean pinned, Integer from, Integer size);
+
+    CompilationDto getCompilationByIdPublic(Long compId);
 }

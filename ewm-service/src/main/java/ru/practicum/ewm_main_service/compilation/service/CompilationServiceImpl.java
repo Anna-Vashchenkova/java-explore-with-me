@@ -61,6 +61,12 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
+    public void deleteCompilation(Long compId) {
+        repository.findById(compId).orElseThrow(() -> new DataNotFoundException(String.format("Подборка событий с ID %S не найдена", compId)));
+        repository.deleteById(compId);
+    }
+
+    @Override
     public List<CompilationDto> getCompilationsPublic(Boolean pinned, Integer from, Integer size) {
         if (pinned == null) {
             Page<Compilation> compilations = repository.findAll(PageRequest.of(from, size));
@@ -73,5 +79,11 @@ public class CompilationServiceImpl implements CompilationService {
         return allByPinned.isEmpty() ? new ArrayList<>() : allByPinned.getContent().stream()
                 .map(CompilationMapper::toCompilationDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public CompilationDto getCompilationByIdPublic(Long compId) {
+        Compilation compilation = repository.findById(compId).orElseThrow(() -> new DataNotFoundException(String.format("Подборка событий с ID %S не найдена", compId)));
+        return CompilationMapper.toCompilationDto(compilation);
     }
 }
