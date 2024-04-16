@@ -36,7 +36,7 @@ public class RequestServiceImpl implements RequestService {
                 .orElseThrow(() -> new DataNotFoundException(String.format("Событие с ID = %s не найдено", eventId)));
         User user = userService.findById(userId)
                 .orElseThrow(() -> new DataNotFoundException(String.format("Пользователь с ID = %s не найден", userId)));
-        Request request;
+        Request request = new Request();
         if (repository.existsByRequesterIdAndEventId(userId, eventId)) {
             throw new DataAlreadyExists(String.format("Запрос с requesterId=%d и eventId=%d уже существует", userId, eventId));
         }
@@ -46,10 +46,13 @@ public class RequestServiceImpl implements RequestService {
         if (!event.getState().equals(ru.practicum.ewm_main_service.event.model.Status.PUBLISHED)) {
             throw new DataAlreadyExists(String.format("Событие с id=%d не опубликовано", eventId));
         }
-        if (event.getParticipantLimit() == (event.getConfirmedRequests())) {
+        if ((event.getParticipantLimit() > 0) && (event.getParticipantLimit() == (event.getConfirmedRequests()))) {
             throw new DataAlreadyExists(String.format("Событие с id=%d имеет максимальное количество заявок", eventId));
         }
-        if (!event.isRequestModeration()) {
+        /*if (event.getParticipantLimit() == 0 || !event.isRequestModeration()) {
+            request.setStatus(RequestStatus.CONFIRMED);
+        }*/
+        if ((event.getParticipantLimit() == 0) || (!event.isRequestModeration())) {
             event.setConfirmedRequests(event.getConfirmedRequests() + 1);
             eventService.saveAfterRequest(event);
             request = repository.save(new Request(null, event, user, LocalDateTime.now(), RequestStatus.CONFIRMED));
