@@ -247,7 +247,7 @@ public class EventServiceImpl implements EventService {
             }
         }
 
-        if ( (categories != null)&& (categories.get(0) < 1)) {
+        if ((categories != null) && (categories.get(0) < 1)) {
             categories = null;
         }
         Sort sort1 = null;
