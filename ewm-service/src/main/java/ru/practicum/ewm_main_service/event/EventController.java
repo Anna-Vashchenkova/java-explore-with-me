@@ -96,7 +96,7 @@ public class EventController {
 
     @PatchMapping("/admin/events/{eventId}")
     public EventFullDto updateEventByAdmin(@PathVariable(name = "eventId") long eventId,
-                                           @RequestBody UpdateEventAdminRequest dto) {
+                                           @Valid @RequestBody UpdateEventAdminRequest dto) {
         log.info("Получен запрос на обновление администратором информации о событии с ID {}", eventId);
         return eventService.updateEventByAdmin(eventId, dto);
     }

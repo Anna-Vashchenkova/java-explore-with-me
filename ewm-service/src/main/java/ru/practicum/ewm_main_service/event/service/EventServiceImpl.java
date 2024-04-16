@@ -17,6 +17,7 @@ import ru.practicum.ewm_main_service.event.repository.EventRepository;
 import ru.practicum.ewm_main_service.event.specification.EventSpecification;
 import ru.practicum.ewm_main_service.exception.DataAlreadyExists;
 import ru.practicum.ewm_main_service.exception.DataNotFoundException;
+import ru.practicum.ewm_main_service.exception.ValidationException;
 import ru.practicum.ewm_main_service.user.service.UserService;
 
 import java.time.LocalDateTime;
@@ -147,8 +148,8 @@ public class EventServiceImpl implements EventService {
         if (states != null) {
             statusEnum = states.stream().map(Status::valueOf).collect(Collectors.toList());
         }
-        LocalDateTime start = rangeStart !=null? LocalDateTime.parse(rangeStart, formatter):null;
-        LocalDateTime end = rangeEnd!= null?LocalDateTime.parse(rangeEnd, formatter):null;
+        LocalDateTime start = rangeStart != null ? LocalDateTime.parse(rangeStart, formatter):null;
+        LocalDateTime end = rangeEnd != null ? LocalDateTime.parse(rangeEnd, formatter):null;
         Page<Event> events = repository.findAll(
                 Specification.where(EventSpecification.userIdsIn(users))
                         .and(EventSpecification.statusIn(statusEnum))
@@ -235,7 +236,11 @@ public class EventServiceImpl implements EventService {
         if ((rangeStart != null) && (rangeEnd != null)) {
             start = LocalDateTime.parse(rangeStart, formatter);
             end = LocalDateTime.parse(rangeEnd, formatter);
+            if (start.isAfter(end)) {
+                throw new ValidationException(String.format("Указаны не валидные данные поиска: время начала %s позже времени окончания %s", rangeStart, rangeEnd));
+            }
         }
+
         if (categories.get(0) < 1) {
             categories = null;
         }
