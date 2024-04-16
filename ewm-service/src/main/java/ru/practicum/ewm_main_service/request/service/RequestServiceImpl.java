@@ -30,6 +30,7 @@ public class RequestServiceImpl implements RequestService {
     private final RequestRepository repository;
     private final UserService userService;
     private final EventService eventService;
+
     @Override
     public ParticipationRequestDto addNewRequest(Long userId, Long eventId) {
         Event event = eventService.findEventById(eventId)
@@ -90,7 +91,7 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public EventRequestStatusUpdateResult updateRequests(Long userId, Long eventId, EventRequestStatusUpdateRequest dto) {
         EventFullDto event = eventService.getEventById(userId, eventId);
-        if(dto.getStatus().equals("REJECTED")) {
+        if (dto.getStatus().equals("REJECTED")) {
             return rejectRequests(dto.getRequestIds());
         } else {
             return confirmRequests(event, dto.getRequestIds());

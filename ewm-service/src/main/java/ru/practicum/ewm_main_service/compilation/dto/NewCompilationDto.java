@@ -3,7 +3,6 @@ package ru.practicum.ewm_main_service.compilation.dto;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 

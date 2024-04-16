@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 public class ApiError {
-    private List <String> errors;
+    private List<String> errors;
     private String message;
     private String reason;
     private String status; //Код статуса HTTP-ответа
@@ -20,5 +20,6 @@ public class ApiError {
         this.message = message;
         this.reason = reason;
         this.status = status;
-        this.timestamp = LocalDateTime.now().toString();    }
+        this.timestamp = LocalDateTime.now().toString();
+    }
 }

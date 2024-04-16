@@ -3,8 +3,6 @@ package ru.practicum.ewm_main_service.request.dto;
 import lombok.*;
 import ru.practicum.ewm_main_service.request.model.RequestStatus;
 
-import java.time.LocalDateTime;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

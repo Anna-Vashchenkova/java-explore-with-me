@@ -137,10 +137,10 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<EventFullDto> searchEvent(List<Long> users, List<String> states, List<Long> categories, String rangeStart, String rangeEnd, int from, int size) {
         Sort sortById = Sort.by(Sort.Direction.ASC, "id");
-        if ( (users == null) || (users.isEmpty()) || (users.get(0) < 1) ) {
+        if ((users == null) || (users.isEmpty()) || (users.get(0) < 1)) {
             users = null;
         }
-        if ( (categories == null) || (categories.isEmpty()) || (categories.get(0) < 1) ) {
+        if ((categories == null) || (categories.isEmpty()) || (categories.get(0) < 1)) {
             categories = null;
         }
 
@@ -148,8 +148,8 @@ public class EventServiceImpl implements EventService {
         if (states != null) {
             statusEnum = states.stream().map(Status::valueOf).collect(Collectors.toList());
         }
-        LocalDateTime start = rangeStart != null ? LocalDateTime.parse(rangeStart, formatter):null;
-        LocalDateTime end = rangeEnd != null ? LocalDateTime.parse(rangeEnd, formatter):null;
+        LocalDateTime start = rangeStart != null ? LocalDateTime.parse(rangeStart, formatter) : null;
+        LocalDateTime end = rangeEnd != null ? LocalDateTime.parse(rangeEnd, formatter) : null;
         Page<Event> events = repository.findAll(
                 Specification.where(EventSpecification.userIdsIn(users))
                         .and(EventSpecification.statusIn(statusEnum))
@@ -198,8 +198,8 @@ public class EventServiceImpl implements EventService {
                     .orElseThrow(() -> new DataNotFoundException(String.format("Категория с ID %s не найдена",
                             dto.getCategory()))));
         }
-        if ((dto.getStateAction()!= null)){
-            if(!resultEvent.getState().equals(Status.PENDING)){
+        if ((dto.getStateAction() != null)) {
+            if (!resultEvent.getState().equals(Status.PENDING)) {
                 throw new ConflictException("Статус можно менять только для события в статусе ОЖИДАНИЕ ");
             }
             if ((dto.getStateAction().toString().equals(UpdateEventAdminRequest.StateAction.PUBLISH_EVENT.toString()))

@@ -49,7 +49,7 @@ public class CompilationController {
         if ((from < 0) || (size < 1)) {
             throw new ValidationException("Неверные параметры запроса");
         }
-        return compilationService.getCompilationsPublic(pinned, from/size, size);
+        return compilationService.getCompilationsPublic(pinned,from / size, size);
     }
 
     @GetMapping("/compilations/{compId}")

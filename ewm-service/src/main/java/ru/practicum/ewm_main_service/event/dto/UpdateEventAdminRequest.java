@@ -1,7 +1,6 @@
 package ru.practicum.ewm_main_service.event.dto;
 
 import lombok.*;
-import org.hibernate.validator.constraints.Length;
 
 import javax.validation.Valid;
 import javax.validation.constraints.PositiveOrZero;

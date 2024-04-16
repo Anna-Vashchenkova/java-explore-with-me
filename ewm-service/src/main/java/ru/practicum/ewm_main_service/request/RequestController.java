@@ -24,14 +24,14 @@ public class RequestController {
     }
 
     @GetMapping("/users/{userId}/requests")
-    public List<ParticipationRequestDto> getRequests(@PathVariable(required = true) Long userId) {
+    public List<ParticipationRequestDto> getRequests(@PathVariable Long userId) {
         log.info("Получен запрос на получение информации о запросах, добавленных пользователем с ID {}", userId);
         return requestService.getRequests(userId);
     }
 
     @PatchMapping("/users/{userId}/requests/{requestId}/cancel")
-    public ParticipationRequestDto requestCancellationByRequester(@PathVariable(required = true) Long userId,
-                                                                  @PathVariable(required = true) Long requestId) {
+    public ParticipationRequestDto requestCancellationByRequester(@PathVariable Long userId,
+                                                                  @PathVariable Long requestId) {
         log.info("Получен запрос на отмену своего запроса с ID {} на участие от пользователя с ID {}", requestId, userId);
         return requestService.requestCancellationByRequester(userId, requestId);
     }

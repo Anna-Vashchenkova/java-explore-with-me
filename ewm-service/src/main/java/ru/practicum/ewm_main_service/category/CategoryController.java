@@ -37,7 +37,7 @@ public class CategoryController {
         if ((from < 0) || (size < 1)) {
             throw new ValidationException("Неверные параметры запроса");
         }
-        return categoryService.getCategories(from, size);
+        return categoryService.getCategories(from / size, size);
     }
 
     @GetMapping("/categories/{catId}")

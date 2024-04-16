@@ -79,7 +79,7 @@ public class EventSpecification {
         return (root, query, criteriaBuilder) -> {
             if (paid == null) {
                 return null;
-            } else if (paid){
+            } else if (paid) {
                 return criteriaBuilder.isTrue(root.get("paid"));
             } else {
                 return criteriaBuilder.isFalse(root.get("paid"));

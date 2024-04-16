@@ -27,7 +27,7 @@ public class UserController {
         if ((from < 0) || (size < 1)) {
             throw new ValidationException("Неверные параметры запроса");
         }
-        return userService.getUsers(ids, from, size);
+        return userService.getUsers(ids, from / size, size);
     }
 
     @PostMapping("admin/users")

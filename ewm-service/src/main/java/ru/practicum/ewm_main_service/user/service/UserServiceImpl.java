@@ -20,6 +20,7 @@ import java.util.Optional;
 @Slf4j
 public class UserServiceImpl implements UserService {
     private final UserRepository repository;
+
     @Override
     public List<UserDto> getUsers(List<Long> ids, int from, int size) {
         List<User> users;

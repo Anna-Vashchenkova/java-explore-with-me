@@ -2,10 +2,8 @@ package ru.practicum.ewm_main_service.event.dto;
 
 import lombok.*;
 import ru.practicum.ewm_main_service.category.dto.CategoryDto;
-import ru.practicum.ewm_main_service.event.model.Location;
 import ru.practicum.ewm_main_service.user.dto.UserShortDto;
 
-import javax.persistence.Embedded;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 

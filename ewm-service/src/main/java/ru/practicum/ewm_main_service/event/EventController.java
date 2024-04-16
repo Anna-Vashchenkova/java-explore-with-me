@@ -46,7 +46,7 @@ public class EventController {
         if ((from < 0) || (size < 1)) {
             throw new ValidationException("Неверные параметры запроса");
         }
-        return eventService.getEvents(userId, from, size);
+        return eventService.getEvents(userId, from / size, size);
     }
 
     @GetMapping("users/{userId}/events/{eventId}")
@@ -113,7 +113,7 @@ public class EventController {
                                                @RequestParam(name = "size", defaultValue = "10") int size,
                                                HttpServletRequest request) {
         log.info("Получен запрос на получение информации об опубликованных событиях по фильтрам");
-        List<EventShortDto> eventsPublic = eventService.getEventsPublic(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
+        List<EventShortDto> eventsPublic = eventService.getEventsPublic(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from / size, size);
 
         client.saveHit("ewm-service", request.getRemoteHost(), request.getRequestURI(),
                 LocalDateTime.now());

@@ -25,6 +25,7 @@ public class EwsConfig {
     public StatisticsClient statisticsClient() {
         return new StatisticsClient(webClientWithTimeout(), "");
     }
+
     public WebClient webClientWithTimeout() {
         final var tcpClient = TcpClient
                 .create()

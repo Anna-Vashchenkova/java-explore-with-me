@@ -6,7 +6,6 @@ import org.hibernate.annotations.OnDeleteAction;
 import ru.practicum.ewm_main_service.event.model.Event;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -34,5 +33,4 @@ public class Compilation {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ToString.Exclude
     private List<Event> events;
-
 }
