@@ -2,6 +2,7 @@ package ru.practicum.statistics_service.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.statistics_dto.HitDto;
@@ -24,6 +25,7 @@ public class StatsController {
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @PostMapping("/hit")
+    @ResponseStatus(HttpStatus.CREATED)
     public void saveHit(@Valid @RequestBody HitDto dto) {
         LocalDateTime dateTime = LocalDateTime.parse(dto.getTimestamp(), formatter);
         statsService.saveHit(dto.getApp(), dto.getUri(), dto.getIp(), dateTime);
