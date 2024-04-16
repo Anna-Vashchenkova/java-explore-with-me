@@ -3,11 +3,14 @@ package ru.practicum.statistics_service.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.statistics_dto.HitDto;
 import ru.practicum.statistics_service.Hit;
 import ru.practicum.statistics_dto.HitOutcomeDto;
+import ru.practicum.statistics_service.exception.ValidationException;
 import ru.practicum.statistics_service.repository.StatsRepository;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,14 +19,21 @@ import java.util.List;
 @Slf4j
 public class StatsServiceImpl implements StatsService {
     private final StatsRepository repository;
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Override
-    public void saveHit(String app, String uri, String ip, LocalDateTime dateTime) {
-        repository.save(new Hit(null, app, uri, ip, dateTime));
+    public void saveHit(HitDto dto) {
+        LocalDateTime dateTime = LocalDateTime.parse(dto.getTimestamp(), formatter);
+        repository.save(new Hit(null, dto.getApp(), dto.getUri(), dto.getIp(), dateTime));
     }
 
     @Override
-    public List<HitOutcomeDto> getStat(LocalDateTime dateTimeStart, LocalDateTime dateTimeEnd, ArrayList<String> uris, boolean unique) {
+    public List<HitOutcomeDto> getStat(String start, String end, ArrayList<String> uris, boolean unique) {
+        LocalDateTime dateTimeStart = LocalDateTime.parse(start, formatter);
+        LocalDateTime dateTimeEnd = LocalDateTime.parse(end, formatter);
+        if (dateTimeStart.isAfter(dateTimeEnd)) {
+            throw new ValidationException("Входные данные не корректны");
+        }
         if (!unique) {
             return getStatNotUnique(dateTimeStart, dateTimeEnd, uris);
         } else {
