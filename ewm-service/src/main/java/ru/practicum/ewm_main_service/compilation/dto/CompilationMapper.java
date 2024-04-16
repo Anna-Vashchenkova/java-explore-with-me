@@ -8,10 +8,9 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 @UtilityClass
-
 public class CompilationMapper {
     public static CompilationDto toCompilationDto(Compilation compilation) {
-        return new CompilationDto().builder()
+        return CompilationDto.builder()
                 .id(compilation.getId())
                 .pinned(compilation.getPinned() != null ? compilation.getPinned() : null)
                 .title(compilation.getTitle())
