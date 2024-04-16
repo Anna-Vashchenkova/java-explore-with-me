@@ -42,7 +42,7 @@ public class EventServiceImpl implements EventService {
         Category category = categoryService.get(dto.getCategory());
         LocalDateTime eventDate = LocalDateTime.parse(dto.getEventDate(), formatter);
         if (eventDate.isBefore(LocalDateTime.now().plusHours(2))) {
-            throw new DataAlreadyExists(String.format("Поле eventDate %s должно содержать дату, которая еще не наступила.", eventDate));
+            throw new ValidationException(String.format("Поле eventDate %s должно содержать дату, которая еще не наступила.", eventDate));
         }
         Event event = repository.save(new Event(null,
                 dto.getTitle(),
@@ -90,7 +90,7 @@ public class EventServiceImpl implements EventService {
         if (dto.getEventDate() != null) {
             eventDate = LocalDateTime.parse(dto.getEventDate(), formatter);
             if (eventDate.isBefore(LocalDateTime.now().plusHours(2))) {
-                throw new DataAlreadyExists(String.format("Поле eventDate %s должно содержать дату, которая еще не наступила.", eventDate));
+                throw new ValidationException(String.format("Поле eventDate %s должно содержать дату, которая еще не наступила.", eventDate));
             }
         }
         if (dto.getTitle() != null) {
@@ -169,7 +169,7 @@ public class EventServiceImpl implements EventService {
         if (dto.getEventDate() != null) {
             eventDate = LocalDateTime.parse(dto.getEventDate(), formatter);
             if (eventDate.isBefore(LocalDateTime.now().plusHours(1))) {
-                throw new DataAlreadyExists(String.format("Поле eventDate %s должно содержать дату, которая еще не наступила.", eventDate));
+                throw new ValidationException(String.format("Поле eventDate %s должно содержать дату, которая еще не наступила.", eventDate));
             }
         }
         if (dto.getTitle() != null) {
@@ -198,12 +198,16 @@ public class EventServiceImpl implements EventService {
                     .orElseThrow(() -> new DataNotFoundException(String.format("Категория с ID %s не найдена",
                             dto.getCategory()))));
         }
+        if ((dto.getStateAction()!= null) && (!resultEvent.getState().equals(Status.PENDING))) {
+            throw new DataAlreadyExists("Статус можно менять только для события в статусе ОЖИДАНИЕ ");
+        }
         if ((dto.getStateAction().toString().equals(UpdateEventAdminRequest.StateAction.PUBLISH_EVENT.toString()))
-                && (!resultEvent.getState().equals(Status.PUBLISHED))) {
+                && (resultEvent.getState().equals(Status.PENDING))) {
             resultEvent.setState(Status.PUBLISHED);
             resultEvent.setPublishedOn(LocalDateTime.now());
-        } else if ((dto.getStateAction().toString().equals(UpdateEventAdminRequest.StateAction.REJECT_EVENT.toString()))
-                && !(resultEvent.getState().equals(Status.CANCELED))) {
+        }
+        if ((dto.getStateAction().toString().equals(UpdateEventAdminRequest.StateAction.REJECT_EVENT.toString()))
+                && (resultEvent.getState().equals(Status.PENDING))) {
             resultEvent.setState(Status.CANCELED);
         }
         repository.save(resultEvent);

@@ -11,6 +11,7 @@ import ru.practicum.ewm_main_service.event.service.EventService;
 import ru.practicum.ewm_main_service.exception.DataAlreadyExists;
 import ru.practicum.ewm_main_service.exception.ValidationException;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -22,7 +23,7 @@ public class CategoryController {
 
     @PostMapping("/admin/categories")
     @ResponseStatus(HttpStatus.CREATED)
-    public CategoryDto addNewCategory(@RequestBody NewCategoryDto dto) {
+    public CategoryDto addNewCategory(@RequestBody @Valid NewCategoryDto dto) {
         log.info("Получен запрос на добавление новой категории {}", dto.getName());
         return categoryService.addNewCategory(dto);
     }

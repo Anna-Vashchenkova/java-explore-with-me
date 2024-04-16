@@ -41,3 +41,14 @@ Content-Type: application/json
 GET http://localhost:8080/admin/events?users=4&states=PENDING&categories=6&rangeStart=2022-01-06%2013%3A30%3A38&rangeEnd=2097-09-06%2013%3A30%3A38&from=0&size=1000
 Accept: application/json
 Content-Type: application/json
+
+
+###  Публикация события админом
+
+PATCH http://localhost:8080/admin/events/78
+Accept: application/json
+Content-Type: application/json
+
+{
+  "stateAction" : "PUBLISH_EVENT"
+}

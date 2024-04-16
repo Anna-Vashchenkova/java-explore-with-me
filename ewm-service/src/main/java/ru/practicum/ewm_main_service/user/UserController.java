@@ -8,6 +8,7 @@ import ru.practicum.ewm_main_service.exception.ValidationException;
 import ru.practicum.ewm_main_service.user.dto.UserDto;
 import ru.practicum.ewm_main_service.user.service.UserService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -31,7 +32,7 @@ public class UserController {
 
     @PostMapping("admin/users")
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto addNewUser(@RequestBody UserDto dto) {
+    public UserDto addNewUser(@Valid @RequestBody UserDto dto) {
         log.info("Получен запрос на добавление нового пользователя с именем {}", dto.getName());
         UserDto userDto = userService.addNewUser(dto);
         log.info("Создан пользователь с ID={}", userDto.getId());

@@ -49,9 +49,6 @@ public class RequestServiceImpl implements RequestService {
         if ((event.getParticipantLimit() > 0) && (event.getParticipantLimit() == (event.getConfirmedRequests()))) {
             throw new DataAlreadyExists(String.format("Событие с id=%d имеет максимальное количество заявок", eventId));
         }
-        /*if (event.getParticipantLimit() == 0 || !event.isRequestModeration()) {
-            request.setStatus(RequestStatus.CONFIRMED);
-        }*/
         if ((event.getParticipantLimit() == 0) || (!event.isRequestModeration())) {
             event.setConfirmedRequests(event.getConfirmedRequests() + 1);
             eventService.saveAfterRequest(event);
