@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 @Configuration
 public class WebClientConfiguration {
-    @Value("${statistics-service.url}")
+    @Value("${statistics.url}")
     private String baseUrl;
     public static final int TIMEOUT = 1000;
 
