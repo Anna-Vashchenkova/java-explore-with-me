@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.ewm_main_service.event.dto.EventFullDto;
 import ru.practicum.ewm_main_service.event.model.Event;
 import ru.practicum.ewm_main_service.event.service.EventService;
-import ru.practicum.ewm_main_service.exception.DataAlreadyExists;
+import ru.practicum.ewm_main_service.exception.ConflictException;
 import ru.practicum.ewm_main_service.exception.DataNotFoundException;
 import ru.practicum.ewm_main_service.request.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.ewm_main_service.request.dto.EventRequestStatusUpdateResult;
@@ -38,16 +38,16 @@ public class RequestServiceImpl implements RequestService {
                 .orElseThrow(() -> new DataNotFoundException(String.format("Пользователь с ID = %s не найден", userId)));
         Request request = new Request();
         if (repository.existsByRequesterIdAndEventId(userId, eventId)) {
-            throw new DataAlreadyExists(String.format("Запрос с requesterId=%d и eventId=%d уже существует", userId, eventId));
+            throw new ConflictException(String.format("Запрос с requesterId=%d и eventId=%d уже существует", userId, eventId));
         }
         if (userId.equals(event.getInitiator().getId())) {
-            throw new DataAlreadyExists(String.format("Инициатор события с id=%d не может добавить запрос на участие в своём событии", userId));
+            throw new ConflictException(String.format("Инициатор события с id=%d не может добавить запрос на участие в своём событии", userId));
         }
         if (!event.getState().equals(ru.practicum.ewm_main_service.event.model.Status.PUBLISHED)) {
-            throw new DataAlreadyExists(String.format("Событие с id=%d не опубликовано", eventId));
+            throw new ConflictException(String.format("Событие с id=%d не опубликовано", eventId));
         }
         if ((event.getParticipantLimit() > 0) && (event.getParticipantLimit() == (event.getConfirmedRequests()))) {
-            throw new DataAlreadyExists(String.format("Событие с id=%d имеет максимальное количество заявок", eventId));
+            throw new ConflictException(String.format("Событие с id=%d имеет максимальное количество заявок", eventId));
         }
         if ((event.getParticipantLimit() == 0) || (!event.isRequestModeration())) {
             event.setConfirmedRequests(event.getConfirmedRequests() + 1);
@@ -111,8 +111,7 @@ public class RequestServiceImpl implements RequestService {
                             repository.save(it);
                             temp[0]++;
                         } else {
-                            it.setStatus(RequestStatus.REJECTED);
-                            repository.save(it);
+                            throw new ConflictException("Лимит превышен");
                         }
                     }
                     if (it.getStatus().equals(RequestStatus.CONFIRMED)) {
@@ -139,6 +138,8 @@ public class RequestServiceImpl implements RequestService {
                             if (it.getStatus().equals(RequestStatus.PENDING)) {
                                 it.setStatus(RequestStatus.REJECTED);
                                 repository.save(it);
+                            } else {
+                                throw new ConflictException("Нельзя отклонить принятую заявку");
                             }
                             if (it.getStatus().equals(RequestStatus.CONFIRMED)) {
                                 confirmedRequests.add(RequestMapper.toDto(it));

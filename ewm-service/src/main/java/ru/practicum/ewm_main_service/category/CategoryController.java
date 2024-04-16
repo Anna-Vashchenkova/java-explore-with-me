@@ -8,7 +8,7 @@ import ru.practicum.ewm_main_service.category.dto.CategoryDto;
 import ru.practicum.ewm_main_service.category.dto.NewCategoryDto;
 import ru.practicum.ewm_main_service.category.service.CategoryService;
 import ru.practicum.ewm_main_service.event.service.EventService;
-import ru.practicum.ewm_main_service.exception.DataAlreadyExists;
+import ru.practicum.ewm_main_service.exception.ConflictException;
 import ru.practicum.ewm_main_service.exception.ValidationException;
 
 import javax.validation.Valid;
@@ -48,7 +48,7 @@ public class CategoryController {
 
     @PatchMapping("/admin/categories/{catId}")
     public CategoryDto updateCategory(@PathVariable(name = "catId") long catId,
-                                      @RequestBody CategoryDto dto) {
+                                      @Valid @RequestBody CategoryDto dto) {
         log.info("Получен запрос на обновление данных категории '{}'", catId);
         return categoryService.updateCategory(catId, dto);
     }
@@ -58,7 +58,7 @@ public class CategoryController {
     public void deleteCategoryById(@PathVariable Long catId) {
         log.info("Получен запрос - удалить данные категории '{}'", catId);
         if (!eventService.findEventByCategoryId(catId).isEmpty()) {
-            throw new DataAlreadyExists(String.format("Существуют события, связанные с категорией %s", catId));
+            throw new ConflictException(String.format("Существуют события, связанные с категорией %s", catId));
         }
         categoryService.deleteCategoryById(catId);
     }

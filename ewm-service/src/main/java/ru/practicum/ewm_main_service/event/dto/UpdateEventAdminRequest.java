@@ -5,6 +5,7 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.validation.Valid;
 import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
 
 @Getter
 @Setter
@@ -12,11 +13,11 @@ import javax.validation.constraints.PositiveOrZero;
 @AllArgsConstructor
 @Builder
 public class UpdateEventAdminRequest {
-    @Length(min = 3, max = 120)
+    @Size(min = 3, max = 120)
     private String title;
-    @Length(min = 20, max = 2000)
+    @Size(min = 20, max = 2000)
     private String annotation;
-    @Length(min = 20, max = 7000)
+    @Size(min = 20, max = 7000)
     private String description;
     private Long category;
     @Valid

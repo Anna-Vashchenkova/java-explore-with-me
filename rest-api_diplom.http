@@ -43,6 +43,12 @@ Accept: application/json
 Content-Type: application/json
 
 
+### поиск событий без параметров - тут всё ок
+GET http://localhost:8080/admin/events
+Accept: application/json
+Content-Type: application/json
+
+
 ###  Публикация события админом
 
 PATCH http://localhost:8080/admin/events/78

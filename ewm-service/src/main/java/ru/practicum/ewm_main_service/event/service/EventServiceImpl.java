@@ -15,7 +15,7 @@ import ru.practicum.ewm_main_service.event.model.Location;
 import ru.practicum.ewm_main_service.event.model.Status;
 import ru.practicum.ewm_main_service.event.repository.EventRepository;
 import ru.practicum.ewm_main_service.event.specification.EventSpecification;
-import ru.practicum.ewm_main_service.exception.DataAlreadyExists;
+import ru.practicum.ewm_main_service.exception.ConflictException;
 import ru.practicum.ewm_main_service.exception.DataNotFoundException;
 import ru.practicum.ewm_main_service.exception.ValidationException;
 import ru.practicum.ewm_main_service.user.service.UserService;
@@ -120,7 +120,7 @@ public class EventServiceImpl implements EventService {
                             dto.getCategory()))));
         }
         if (resultEvent.getState().equals(Status.PUBLISHED)) {
-            throw new DataAlreadyExists("Событие не должно быть опубликовано");
+            throw new ConflictException("Событие не должно быть опубликовано");
         }
         if (dto.getStateAction() != null) {
             if (dto.getStateAction().toString().equals(UpdateEventUserRequest.StateAction.CANCEL_REVIEW.toString())) {
@@ -137,10 +137,10 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<EventFullDto> searchEvent(List<Long> users, List<String> states, List<Long> categories, String rangeStart, String rangeEnd, int from, int size) {
         Sort sortById = Sort.by(Sort.Direction.ASC, "id");
-        if (users.get(0) < 1) {
+        if ( (users == null) || (users.isEmpty()) || (users.get(0) < 1) ) {
             users = null;
         }
-        if (categories.get(0) < 1) {
+        if ( (categories == null) || (categories.isEmpty()) || (categories.get(0) < 1) ) {
             categories = null;
         }
 
@@ -198,17 +198,19 @@ public class EventServiceImpl implements EventService {
                     .orElseThrow(() -> new DataNotFoundException(String.format("Категория с ID %s не найдена",
                             dto.getCategory()))));
         }
-        if ((dto.getStateAction()!= null) && (!resultEvent.getState().equals(Status.PENDING))) {
-            throw new DataAlreadyExists("Статус можно менять только для события в статусе ОЖИДАНИЕ ");
-        }
-        if ((dto.getStateAction().toString().equals(UpdateEventAdminRequest.StateAction.PUBLISH_EVENT.toString()))
-                && (resultEvent.getState().equals(Status.PENDING))) {
-            resultEvent.setState(Status.PUBLISHED);
-            resultEvent.setPublishedOn(LocalDateTime.now());
-        }
-        if ((dto.getStateAction().toString().equals(UpdateEventAdminRequest.StateAction.REJECT_EVENT.toString()))
-                && (resultEvent.getState().equals(Status.PENDING))) {
-            resultEvent.setState(Status.CANCELED);
+        if ((dto.getStateAction()!= null)){
+            if(!resultEvent.getState().equals(Status.PENDING)){
+                throw new ConflictException("Статус можно менять только для события в статусе ОЖИДАНИЕ ");
+            }
+            if ((dto.getStateAction().toString().equals(UpdateEventAdminRequest.StateAction.PUBLISH_EVENT.toString()))
+                    && (resultEvent.getState().equals(Status.PENDING))) {
+                resultEvent.setState(Status.PUBLISHED);
+                resultEvent.setPublishedOn(LocalDateTime.now());
+            }
+            if ((dto.getStateAction().toString().equals(UpdateEventAdminRequest.StateAction.REJECT_EVENT.toString()))
+                    && (resultEvent.getState().equals(Status.PENDING))) {
+                resultEvent.setState(Status.CANCELED);
+            }
         }
         repository.save(resultEvent);
         log.info("Обновление администратором события : {}", resultEvent.getTitle());

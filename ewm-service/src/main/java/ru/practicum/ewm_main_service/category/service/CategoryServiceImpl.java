@@ -11,7 +11,7 @@ import ru.practicum.ewm_main_service.category.dto.CategoryDto;
 import ru.practicum.ewm_main_service.category.dto.CategoryMapper;
 import ru.practicum.ewm_main_service.category.dto.NewCategoryDto;
 import ru.practicum.ewm_main_service.category.repository.CategoryRepository;
-import ru.practicum.ewm_main_service.exception.DataAlreadyExists;
+import ru.practicum.ewm_main_service.exception.ConflictException;
 import ru.practicum.ewm_main_service.exception.ValidationException;
 
 import java.util.List;
@@ -29,7 +29,7 @@ public class CategoryServiceImpl implements CategoryService {
             throw new ValidationException("Field: name. Error: must not be blank. Value: null.");
         }
         if (repository.findCategoryByName(dto.getName()) != null) {
-            throw new DataAlreadyExists("could not execute statement");
+            throw new ConflictException("could not execute statement");
         }
         Category category = repository.save(new Category(null, dto.getName()));
         return CategoryMapper.toCategoryDto(category);
@@ -68,7 +68,7 @@ public class CategoryServiceImpl implements CategoryService {
             if (categoryByName == null) {
                 categoryUpdate.setName(dto.getName());
             } else if (!categoryByName.getId().equals(catId)) {
-                throw new DataAlreadyExists("Категория с таким названием уже существует.");
+                throw new ConflictException("Категория с таким названием уже существует.");
             }
         }
         return CategoryMapper.toCategoryDto(repository.save(categoryUpdate));

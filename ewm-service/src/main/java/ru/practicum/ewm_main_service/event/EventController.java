@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm_main_service.event.dto.*;
 import ru.practicum.ewm_main_service.event.service.EventService;
-import ru.practicum.ewm_main_service.exception.DataAlreadyExists;
+import ru.practicum.ewm_main_service.exception.ConflictException;
 import ru.practicum.ewm_main_service.exception.ValidationException;
 import ru.practicum.ewm_main_service.request.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.ewm_main_service.request.dto.EventRequestStatusUpdateResult;
@@ -77,7 +77,7 @@ public class EventController {
                                                          @RequestBody EventRequestStatusUpdateRequest dto) {
         log.info("Запрос на изменение статуса заявок на участие в событии с ID= {} текущего пользователя ID= {}", eventId, userId);
         if (RequestStatus.valueOf(dto.getStatus()) == null) {
-            throw new DataAlreadyExists(String.format("Статус заявок %s не валидный", dto.getStatus()));
+            throw new ConflictException(String.format("Статус заявок %s не валидный", dto.getStatus()));
         }
         return requestService.updateRequests(userId, eventId, dto);
     }
