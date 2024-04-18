@@ -2,6 +2,7 @@ package ru.practicum.statistics_service.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.statistics_dto.HitDto;
@@ -10,8 +11,6 @@ import ru.practicum.statistics_service.service.StatsService;
 import ru.practicum.statistics_service.exception.ValidationException;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,12 +20,11 @@ import java.util.List;
 @Validated
 public class StatsController {
     private final StatsService statsService;
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @PostMapping("/hit")
+    @ResponseStatus(HttpStatus.CREATED)
     public void saveHit(@Valid @RequestBody HitDto dto) {
-        LocalDateTime dateTime = LocalDateTime.parse(dto.getTimestamp(), formatter);
-        statsService.saveHit(dto.getApp(), dto.getUri(), dto.getIp(), dateTime);
+        statsService.saveHit(dto);
     }
 
     @GetMapping("/stats")
@@ -39,11 +37,6 @@ public class StatsController {
         if ((start.isBlank()) || (end.isBlank())) {
             throw new ValidationException("Входные данные не корректны");
         }
-        LocalDateTime dateTimeStart = LocalDateTime.parse(start, formatter);
-        LocalDateTime dateTimeEnd = LocalDateTime.parse(end, formatter);
-        if (dateTimeStart.isAfter(dateTimeEnd)) {
-            throw new ValidationException("Входные данные не корректны");
-        }
-        return statsService.getStat(dateTimeStart, dateTimeEnd, uris, unique);
+        return statsService.getStat(start, end, uris, unique);
     }
 }
