@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm_main_service.comment.dto.CommentDto;
 import ru.practicum.ewm_main_service.comment.dto.NewCommentDto;
+import ru.practicum.ewm_main_service.comment.dto.UpdateCommentUserRequest;
 import ru.practicum.ewm_main_service.comment.service.CommentService;
 
 import javax.validation.Valid;
@@ -26,4 +27,16 @@ public class CommentController {
         log.info("Создан комментарий с ID={}", commentDto.getId());
         return commentDto;
     }
+
+    @PatchMapping("/users/{userId}/events/{eventId}/comments/{commentId}")
+    public CommentDto updateComment(@PathVariable(name = "userId") long userId,
+                                    @PathVariable(name = "eventId") long eventId,
+                                    @PathVariable(name = "commentId") long commentId,
+                                    @Valid @RequestBody UpdateCommentUserRequest dto) {
+        log.info("Получен запрос на обновление комментария с ID {} к событию с ID {} пользователем с ID {}", commentId, eventId, userId);
+        CommentDto commentDto = commentService.updateComment(userId, eventId, commentId, dto);
+        log.info("Обновлен комментарий с ID={}", commentDto.getId());
+        return commentDto;
+    }
+
 }

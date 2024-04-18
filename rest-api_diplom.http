@@ -58,3 +58,21 @@ Content-Type: application/json
 {
   "stateAction" : "PUBLISH_EVENT"
 }
+
+### Добавление комментария
+POST http://localhost:8080/users/1/events/1/comments
+Accept: application/json
+Content-Type: application/json
+
+{
+  "text": "Классный концерт"
+}
+
+### Редактирование комментария
+PATCH http://localhost:8080/users/1/events/1/comments/2
+Accept: application/json
+Content-Type: application/json
+
+{
+  "text": "Классный концерт - обновление"
+}

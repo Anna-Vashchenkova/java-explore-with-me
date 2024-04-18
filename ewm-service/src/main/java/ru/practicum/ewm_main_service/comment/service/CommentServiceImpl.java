@@ -7,6 +7,7 @@ import ru.practicum.ewm_main_service.comment.Comment;
 import ru.practicum.ewm_main_service.comment.dto.CommentDto;
 import ru.practicum.ewm_main_service.comment.dto.CommentMapper;
 import ru.practicum.ewm_main_service.comment.dto.NewCommentDto;
+import ru.practicum.ewm_main_service.comment.dto.UpdateCommentUserRequest;
 import ru.practicum.ewm_main_service.comment.repository.CommentRepository;
 import ru.practicum.ewm_main_service.event.model.Event;
 import ru.practicum.ewm_main_service.event.service.EventService;
@@ -37,6 +38,18 @@ public class CommentServiceImpl implements CommentService {
                 userService.get(userId),
                 event,
                 LocalDateTime.now()));
+        return CommentMapper.toCommentDto(comment);
+    }
+
+    @Override
+    public CommentDto updateComment(long userId, long eventId, long commentId, UpdateCommentUserRequest dto) {
+        userService.findById(userId).orElseThrow(() -> new DataNotFoundException(String.format("Пользователь с ID = %s не найден", userId)));
+        eventService.findEventById(eventId)
+                .orElseThrow(() -> new DataNotFoundException(String.format("Событие с ID %s не найдено", eventId)));
+        Comment comment = repository.findById(commentId)
+                .orElseThrow(() -> new DataNotFoundException(String.format("Комментарий с ID %s не найден", commentId)));
+        comment.setText(dto.getText());
+        repository.save(comment);
         return CommentMapper.toCommentDto(comment);
     }
 }
