@@ -67,3 +67,16 @@ create table if not exists event_compilations
     compilation_id bigint not null references compilations (id) on delete cascade,
     event_id       bigint not null references events (id) on delete cascade
     );
+
+drop table if exists comments cascade;
+create table if not exists comments
+
+(
+    id bigint generated always as identity primary key,
+    text varchar(2000) not null,
+    owner_id bigint not null,
+    event_id bigint not null,
+    comment_created_on timestamp without time zone not null,
+    foreign key (owner_id) references users (id) on delete cascade,
+    foreign key (event_id) references events (event_id)
+    );
