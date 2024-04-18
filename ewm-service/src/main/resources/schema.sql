@@ -78,5 +78,5 @@ create table if not exists comments
     event_id bigint not null,
     comment_created_on timestamp without time zone not null,
     foreign key (owner_id) references users (id) on delete cascade,
-    foreign key (event_id) references events (event_id)
+    foreign key (event_id) references events (id) on delete cascade
     );
