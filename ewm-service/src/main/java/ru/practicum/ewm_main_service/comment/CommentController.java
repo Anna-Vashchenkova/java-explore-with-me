@@ -39,4 +39,12 @@ public class CommentController {
         return commentDto;
     }
 
+    @DeleteMapping("/users/{userId}/events/{eventId}/comments/{commentId}")
+    public void deleteComment(@PathVariable(name = "userId") long userId,
+                              @PathVariable(name = "eventId") long eventId,
+                              @PathVariable(name = "commentId") long commentId) {
+        log.info("Получен запрос на удаление комментария с ID {} к событию с ID {} пользователем с ID {}", commentId, eventId, userId);
+        commentService.deleteComment(userId, eventId, commentId);
+        log.info("Удален комментарий с ID={}", commentId);
+    }
 }

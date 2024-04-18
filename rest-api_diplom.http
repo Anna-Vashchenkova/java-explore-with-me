@@ -69,10 +69,15 @@ Content-Type: application/json
 }
 
 ### Редактирование комментария
-PATCH http://localhost:8080/users/1/events/1/comments/2
+PATCH http://localhost:8080/users/1/events/1/comments/1
 Accept: application/json
 Content-Type: application/json
 
 {
   "text": "Классный концерт - обновление"
 }
+
+### Удаление комментария
+DELETE http://localhost:8080/users/1/events/1/comments/1
+Accept: application/json
+Content-Type: application/json

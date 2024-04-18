@@ -10,7 +10,9 @@ import ru.practicum.ewm_main_service.comment.dto.NewCommentDto;
 import ru.practicum.ewm_main_service.comment.dto.UpdateCommentUserRequest;
 import ru.practicum.ewm_main_service.comment.repository.CommentRepository;
 import ru.practicum.ewm_main_service.event.model.Event;
+import ru.practicum.ewm_main_service.event.model.Status;
 import ru.practicum.ewm_main_service.event.service.EventService;
+import ru.practicum.ewm_main_service.exception.ConflictException;
 import ru.practicum.ewm_main_service.exception.DataNotFoundException;
 import ru.practicum.ewm_main_service.user.service.UserService;
 
@@ -33,6 +35,9 @@ public class CommentServiceImpl implements CommentService {
         }
         Event event = eventService.findEventById(eventId)
                 .orElseThrow(() -> new DataNotFoundException(String.format("Событие с ID %s не найдено", eventId)));
+        if (!event.getState().equals(Status.PUBLISHED)) {
+            throw new ConflictException("Невозможно оставить комментарий к не опубликованному событию");
+        }
         Comment comment = repository.save(new Comment(null,
                 dto.getText(),
                 userService.get(userId),
@@ -51,5 +56,15 @@ public class CommentServiceImpl implements CommentService {
         comment.setText(dto.getText());
         repository.save(comment);
         return CommentMapper.toCommentDto(comment);
+    }
+
+    @Override
+    public void deleteComment(long userId, long eventId, long commentId) {
+        userService.findById(userId).orElseThrow(() -> new DataNotFoundException(String.format("Пользователь с ID = %s не найден", userId)));
+        eventService.findEventById(eventId)
+                .orElseThrow(() -> new DataNotFoundException(String.format("Событие с ID %s не найдено", eventId)));
+        Comment comment = repository.findById(commentId)
+                .orElseThrow(() -> new DataNotFoundException(String.format("Комментарий с ID %s не найден", commentId)));
+        repository.delete(comment);
     }
 }
