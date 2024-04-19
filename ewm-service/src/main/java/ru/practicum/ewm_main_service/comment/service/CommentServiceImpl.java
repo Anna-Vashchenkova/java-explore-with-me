@@ -62,7 +62,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentDto getCommentById( long eventId, long commentId) {
+    public CommentDto getCommentById(long eventId, long commentId) {
         eventService.findEventById(eventId)
                 .orElseThrow(() -> new DataNotFoundException(String.format("Событие с ID %s не найдено", eventId)));
         Comment comment = repository.findById(commentId)
