@@ -2,6 +2,9 @@ package ru.practicum.ewm_main_service.comment.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm_main_service.comment.Comment;
 import ru.practicum.ewm_main_service.comment.dto.CommentDto;
@@ -18,6 +21,9 @@ import ru.practicum.ewm_main_service.user.service.UserService;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +49,26 @@ public class CommentServiceImpl implements CommentService {
                 userService.get(userId),
                 event,
                 LocalDateTime.now()));
+        return CommentMapper.toCommentDto(comment);
+    }
+
+    @Override
+    public List<CommentDto> getComments(long userId, long eventId, int from, int size) {
+        userService.findById(userId).orElseThrow(() -> new DataNotFoundException(String.format("Пользователь с ID = %s не найден", userId)));
+        eventService.findEventById(eventId)
+                .orElseThrow(() -> new DataNotFoundException(String.format("Событие с ID %s не найдено", eventId)));
+        Sort sortById = Sort.by(Sort.Direction.ASC, "id");
+        Page<Comment> commentPage = repository.findAll(userId, eventId, PageRequest.of(from, size, sortById));
+        return commentPage.isEmpty() ? new ArrayList<>() : commentPage.stream().map(CommentMapper::toCommentDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public CommentDto getCommentById(long userId, long eventId, long commentId) {
+        userService.findById(userId).orElseThrow(() -> new DataNotFoundException(String.format("Пользователь с ID = %s не найден", userId)));
+        eventService.findEventById(eventId)
+                .orElseThrow(() -> new DataNotFoundException(String.format("Событие с ID %s не найдено", eventId)));
+        Comment comment = repository.findById(commentId)
+                .orElseThrow(() -> new DataNotFoundException(String.format("Комментарий с ID %s не найден", commentId)));
         return CommentMapper.toCommentDto(comment);
     }
 

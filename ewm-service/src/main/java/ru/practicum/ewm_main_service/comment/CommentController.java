@@ -8,8 +8,10 @@ import ru.practicum.ewm_main_service.comment.dto.CommentDto;
 import ru.practicum.ewm_main_service.comment.dto.NewCommentDto;
 import ru.practicum.ewm_main_service.comment.dto.UpdateCommentUserRequest;
 import ru.practicum.ewm_main_service.comment.service.CommentService;
+import ru.practicum.ewm_main_service.exception.ValidationException;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -28,6 +30,28 @@ public class CommentController {
         return commentDto;
     }
 
+    @GetMapping("/users/{userId}/events/{eventId}/comments")
+    public List<CommentDto> getComments(@PathVariable(name = "userId") long userId,
+                                        @PathVariable(name = "eventId") long eventId,
+                                        @RequestParam(name = "from", defaultValue = "0") int from,
+                                        @RequestParam(name = "size", defaultValue = "10") int size) {
+        log.info("Получен запрос на получение информации о комментариях к событию с ID {} пользователем с ID {}", eventId, userId);
+        if ((from < 0) || (size < 1)) {
+            throw new ValidationException("Неверные параметры запроса");
+        }
+        return commentService.getComments(userId, eventId, from / size, size);
+    }
+
+    @GetMapping("/users/{userId}/events/{eventId}/comments/{commentId}")
+    public CommentDto getCommentById(@PathVariable(name = "userId") long userId,
+                                 @PathVariable(name = "eventId") long eventId,
+                                 @PathVariable(name = "commentId") long commentId) {
+        log.info("Получен запрос на получение информации о комментарии с ID {} к событию с ID {} пользователем с ID {}", commentId, eventId, userId);
+        CommentDto commentDto = commentService.getCommentById(userId, eventId, commentId);
+        log.info("Получен комментарий с ID={}", commentDto.getId());
+        return commentDto;
+    }
+
     @PatchMapping("/users/{userId}/events/{eventId}/comments/{commentId}")
     public CommentDto updateComment(@PathVariable(name = "userId") long userId,
                                     @PathVariable(name = "eventId") long eventId,
@@ -40,6 +64,7 @@ public class CommentController {
     }
 
     @DeleteMapping("/users/{userId}/events/{eventId}/comments/{commentId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteComment(@PathVariable(name = "userId") long userId,
                               @PathVariable(name = "eventId") long eventId,
                               @PathVariable(name = "commentId") long commentId) {

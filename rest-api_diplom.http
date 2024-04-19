@@ -77,6 +77,16 @@ Content-Type: application/json
   "text": "Классный концерт - обновление"
 }
 
+### Получение комментариев
+GET http://localhost:8080/users/1/events/1/comments
+Accept: application/json
+Content-Type: application/json
+
+### Получение комментария
+GET http://localhost:8080/users/1/events/1/comments/1
+Accept: application/json
+Content-Type: application/json
+
 ### Удаление комментария
 DELETE http://localhost:8080/users/1/events/1/comments/1
 Accept: application/json
