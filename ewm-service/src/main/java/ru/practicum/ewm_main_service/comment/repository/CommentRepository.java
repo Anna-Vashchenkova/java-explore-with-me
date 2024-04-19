@@ -9,6 +9,6 @@ import ru.practicum.ewm_main_service.comment.Comment;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @Query("select c from Comment as c " +
-    "where c.owner.id = :userId and c.event.id = :eventId order by c.id")
-    Page<Comment> findAll(long userId, long eventId, Pageable pageable);
+    "where c.event.id = :eventId order by c.id")
+    Page<Comment> findAll(long eventId, Pageable pageable);
 }

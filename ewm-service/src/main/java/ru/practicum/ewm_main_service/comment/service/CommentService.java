@@ -10,9 +10,9 @@ public interface CommentService {
 
     CommentDto addNewComment(long userId, long eventId, NewCommentDto dto);
 
-    List<CommentDto> getComments(long userId, long eventId, int from, int size);
+    List<CommentDto> getComments(long eventId, int from, int size);
 
-    CommentDto getCommentById(long userId, long eventId, long commentId);
+    CommentDto getCommentById(long eventId, long commentId);
 
     CommentDto updateComment(long userId, long eventId, long commentId, UpdateCommentUserRequest dto);
 

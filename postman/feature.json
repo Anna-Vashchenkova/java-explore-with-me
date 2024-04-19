@@ -91,7 +91,13 @@
 			],
 			"request": {
 				"method": "POST",
-				"header": [],
+				"header": [
+					{
+						"key": "X-Explore-User-Id",
+						"value": "{{uid}}",
+						"type": "text"
+					}
+				],
 				"body": {
 					"mode": "raw",
 					"raw": "{{request_body}}",
@@ -102,13 +108,11 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseUrl}}/users/:userId/events/:eventId/comments",
+					"raw": "{{baseUrl}}/events/:eventId/comments",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
-						"users",
-						":userId",
 						"events",
 						":eventId",
 						"comments"
@@ -121,10 +125,6 @@
 						}
 					],
 					"variable": [
-						{
-							"key": "userId",
-							"value": "{{uid}}"
-						},
 						{
 							"key": "eventId",
 							"value": "{{eid}}"
@@ -195,7 +195,7 @@
 							"commentId = pm.collectionVariables.get('comid');\r",
 							"\r",
 							"pm.sendRequest({\r",
-							"        url: pm.collectionVariables.get(\"baseUrl\") + \"/users/\" + userId + \"/events/\" + eventId + \"/comments/\" + commentId,\r",
+							"        url: pm.collectionVariables.get(\"baseUrl\") + \"/events/\" + eventId + \"/comments/\" + commentId,\r",
 							"        method: 'GET',\r",
 							"    }, (error, response) => {\r",
 							"        pm.test(\"Комментарий не должен быть найден после удаления\", function () {\r",
@@ -211,15 +211,19 @@
 			],
 			"request": {
 				"method": "DELETE",
-				"header": [],
+				"header": [
+					{
+						"key": "X-Explore-User-Id",
+						"value": "{{uid}}",
+						"type": "text"
+					}
+				],
 				"url": {
-					"raw": "{{baseUrl}}/users/:userId/events/:eventId/comments/:commentId",
+					"raw": "{{baseUrl}}/events/:eventId/comments/:commentId",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
-						"users",
-						":userId",
 						"events",
 						":eventId",
 						"comments",
@@ -233,10 +237,6 @@
 						}
 					],
 					"variable": [
-						{
-							"key": "userId",
-							"value": "{{uid}}"
-						},
 						{
 							"key": "eventId",
 							"value": "{{eid}}"
@@ -328,13 +328,11 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/users/:userId/events/:eventId/comments/:commentId",
+					"raw": "{{baseUrl}/events/:eventId/comments/:commentId",
 					"host": [
-						"{{baseUrl}}"
+						"{{baseUrl}"
 					],
 					"path": [
-						"users",
-						":userId",
 						"events",
 						":eventId",
 						"comments",
@@ -348,10 +346,6 @@
 						}
 					],
 					"variable": [
-						{
-							"key": "userId",
-							"value": "{{uid}}"
-						},
 						{
 							"key": "eventId",
 							"value": "{{eid}}"
@@ -441,13 +435,11 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/users/:userId/events/:eventId/comments",
+					"raw": "{{baseUrl}}/events/:eventId/comments",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
-						"users",
-						":userId",
 						"events",
 						":eventId",
 						"comments"
@@ -460,10 +452,6 @@
 						}
 					],
 					"variable": [
-						{
-							"key": "userId",
-							"value": "{{uid}}"
-						},
 						{
 							"key": "eventId",
 							"value": "{{eid}}"
@@ -496,7 +484,7 @@
 					"    }",
 					"",
 					"    async addComment(userId, eventId, comment, verbose=null) {",
-					"        return this.post(\"/users/\" + userId+\"/events/\" + eventId + \"/comments\", comment, \"Ошибка при добавлении нового комментария: \", verbose);",
+					"        return this.post(\"/events/\" + eventId + \"/comments\", comment, \"Ошибка при добавлении нового комментария: \", verbose, \"X-Explore-User-Id:\"+userId);",
 					"    }",
 					"",
 					"    async addEvent(userId, event, verbose=null) {",
@@ -539,8 +527,8 @@
 					"        return this.get('/admin/users?ids=' + userId, null, \"Ошибка при поиске пользователя по id\", verbose);",
 					"    }",
 					"",
-					"    async post(path, body, errorText = \"Ошибка при выполнении post-запроса: \", verbose=null) {",
-					"        return this.sendRequest(\"POST\", path, body, errorText, verbose);",
+					"    async post(path, body, errorText = \"Ошибка при выполнении post-запроса: \", verbose=null, additionalHeader = null) {",
+					"        return this.sendRequest(\"POST\", path, body, errorText, verbose, additionalHeader);",
 					"    }",
 					"",
 					"    async patch(path, body = null, errorText = \"Ошибка при выполнении patch-запроса: \", verbose=null) {",
@@ -550,15 +538,18 @@
 					"    async get(path, body = null, errorText = \"Ошибка при выполнении get-запроса: \", verbose=null) {",
 					"        return this.sendRequest(\"GET\", path, body, errorText, verbose);",
 					"    }",
-					"    async sendRequest(method, path, body=null, errorText = \"Ошибка при выполнении запроса: \", verbose=null) {",
+					"    async sendRequest(method, path, body=null, errorText = \"Ошибка при выполнении запроса: \", verbose=null, additionalHeader = null) {",
 					"        return new Promise((resolve, reject) => {",
 					"            verbose = verbose == null ? this._verbose : verbose;",
 					"            const request = {",
+					"                header: [ \"Content-Type: application/json\" ] ,",
 					"                url: this.baseUrl + path,",
 					"                method: method,",
 					"                body: body == null ? \"\" : JSON.stringify(body),",
-					"                header: { \"Content-Type\": \"application/json\" },",
 					"            };",
+					"            if (additionalHeader) {",
+					"                request.header.add(additionalHeader)",
+					"            }",
 					"            if(verbose) {",
 					"                console.log(\"Отправляю запрос: \", request);",
 					"            }",

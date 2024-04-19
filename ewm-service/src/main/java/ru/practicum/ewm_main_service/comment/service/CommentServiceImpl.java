@@ -53,18 +53,16 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<CommentDto> getComments(long userId, long eventId, int from, int size) {
-        userService.findById(userId).orElseThrow(() -> new DataNotFoundException(String.format("Пользователь с ID = %s не найден", userId)));
+    public List<CommentDto> getComments(long eventId, int from, int size) {
         eventService.findEventById(eventId)
                 .orElseThrow(() -> new DataNotFoundException(String.format("Событие с ID %s не найдено", eventId)));
         Sort sortById = Sort.by(Sort.Direction.ASC, "id");
-        Page<Comment> commentPage = repository.findAll(userId, eventId, PageRequest.of(from, size, sortById));
+        Page<Comment> commentPage = repository.findAll(eventId, PageRequest.of(from, size, sortById));
         return commentPage.isEmpty() ? new ArrayList<>() : commentPage.stream().map(CommentMapper::toCommentDto).collect(Collectors.toList());
     }
 
     @Override
-    public CommentDto getCommentById(long userId, long eventId, long commentId) {
-        userService.findById(userId).orElseThrow(() -> new DataNotFoundException(String.format("Пользователь с ID = %s не найден", userId)));
+    public CommentDto getCommentById( long eventId, long commentId) {
         eventService.findEventById(eventId)
                 .orElseThrow(() -> new DataNotFoundException(String.format("Событие с ID %s не найдено", eventId)));
         Comment comment = repository.findById(commentId)
