@@ -83,7 +83,7 @@ Accept: application/json
 Content-Type: application/json
 
 ### Получение комментария
-GET http://localhost:8080/users/1/events/1/comments/1
+GET http://localhost:8080/events/4/comments/4
 Accept: application/json
 Content-Type: application/json
 

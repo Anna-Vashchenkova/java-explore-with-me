@@ -328,9 +328,9 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}/events/:eventId/comments/:commentId",
+					"raw": "{{baseUrl}}/events/:eventId/comments/:commentId",
 					"host": [
-						"{{baseUrl}"
+						"{{baseUrl}}"
 					],
 					"path": [
 						"events",
