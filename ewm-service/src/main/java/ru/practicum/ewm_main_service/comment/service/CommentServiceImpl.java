@@ -20,7 +20,6 @@ import ru.practicum.ewm_main_service.exception.DataNotFoundException;
 import ru.practicum.ewm_main_service.user.service.UserService;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,7 +31,6 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository repository;
     private final UserService userService;
     private final EventService eventService;
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Override
     public CommentDto addNewComment(long userId, long eventId, NewCommentDto dto) {
